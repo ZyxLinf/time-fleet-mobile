@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src *; img-src * 'self' data: blob:; frame-src *; style-src * 'unsafe-inline';">
+    <title>Time Fleet OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- SPLASH / LOADING -->
+    <div id="splash-screen">
+        <div class="splash-logo">
+            <div class="splash-icon">TF</div>
+            <h1>Time Fleet</h1>
+            <p>Solicitação de Ordens de Serviço</p>
+        </div>
+        <div class="splash-loader">
+            <div class="loader-bar"></div>
+        </div>
+    </div>
+
+    <!-- TELA: CONFIGURAR SERVIDOR -->
+    <div id="screen-config" class="screen hidden">
+        <div class="screen-content">
+            <div class="config-header">
+                <div class="app-logo">TF</div>
+                <h2>Configurar Conexão</h2>
+                <p>Informe o endereço do servidor Time Fleet para conectar o aplicativo.</p>
+            </div>
+            <div class="form-group">
+                <label>Endereço do Servidor</label>
+                <input type="url" id="config-server-url" placeholder="https://seudominio.com.br" autocomplete="off" autocapitalize="none">
+                <small>Ex: http://192.168.1.5:7011 ou https://meusite.com.br</small>
+            </div>
+            <button class="btn-primary" id="btn-salvar-config">Conectar e Continuar</button>
+        </div>
+    </div>
+
+    <!-- TELA: PRINCIPAL - FORMULÁRIO -->
+    <div id="screen-form" class="screen hidden">
+        <div class="safe-area-top"></div>
+        
+        <!-- HEADER -->
+        <div class="app-header">
+            <div class="header-left">
+                <div class="app-icon">TF</div>
+                <div>
+                    <span class="app-title">Time Fleet</span>
+                    <span class="app-subtitle">Solicitar O.S.</span>
+                </div>
+            </div>
+            <button class="btn-icon" id="btn-config" title="Configurações">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- STATUS DE CONEXÃO -->
+        <div id="connection-status" class="connection-status">
+            <div class="status-dot offline"></div>
+            <span id="status-text">Verificando conexão...</span>
+        </div>
+
+        <!-- FORMULÁRIO -->
+        <div class="form-scroll">
+            <form id="form-os" novalidate>
+                
+                <!-- Veículo -->
+                <div class="form-card">
+                    <div class="form-card-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                        Veículo
+                    </div>
+                    <div class="form-group">
+                        <label>Placa / Identificação</label>
+                        <input type="text" id="os-veiculo" placeholder="Ex: SRI7A69 ou EMP001" required autocapitalize="characters" list="lista-veiculos-native">
+                        <datalist id="lista-veiculos-native"></datalist>
+                    </div>
+                </div>
+
+                <!-- Tipo de Serviço -->
+                <div class="form-card">
+                    <div class="form-card-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                        Tipo de Serviço
+                    </div>
+                    <div class="type-grid">
+                        <label class="type-option">
+                            <input type="radio" name="tipo-servico" value="Corretivo" required>
+                            <div class="type-card">
+                                <span class="type-emoji">🔧</span>
+                                <span>Corretivo</span>
+                            </div>
+                        </label>
+                        <label class="type-option">
+                            <input type="radio" name="tipo-servico" value="Preventivo">
+                            <div class="type-card">
+                                <span class="type-emoji">🛡️</span>
+                                <span>Preventivo</span>
+                            </div>
+                        </label>
+                        <label class="type-option">
+                            <input type="radio" name="tipo-servico" value="Elétrico">
+                            <div class="type-card">
+                                <span class="type-emoji">⚡</span>
+                                <span>Elétrico</span>
+                            </div>
+                        </label>
+                        <label class="type-option">
+                            <input type="radio" name="tipo-servico" value="Preditivo">
+                            <div class="type-card">
+                                <span class="type-emoji">📊</span>
+                                <span>Preditivo</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Equipe -->
+                <div class="form-card">
+                    <div class="form-card-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        Equipe Responsável
+                    </div>
+                    <div class="equipe-tabs">
+                        <button type="button" class="equipe-tab active" data-equipe="mecanicos">🔩 Oficina</button>
+                        <button type="button" class="equipe-tab" data-equipe="lavadores">🚿 Lavagem</button>
+                        <button type="button" class="equipe-tab" data-equipe="borracheiros">🔴 Borracharia</button>
+                    </div>
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label>Selecione o(s) responsável(is)</label>
+                        <div id="lista-equipe" class="equipe-lista"></div>
+                        <small>Toque para selecionar / toque novamente para deselecionar</small>
+                    </div>
+                </div>
+
+                <!-- Descrição -->
+                <div class="form-card">
+                    <div class="form-card-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        Descrição
+                    </div>
+                    <div class="form-group">
+                        <label>Descreva o problema ou serviço</label>
+                        <textarea id="os-descricao" rows="4" placeholder="Ex: Veículo com barulho no motor, pneu furado, troca de óleo..." required></textarea>
+                    </div>
+                </div>
+
+                <!-- Botão Enviar -->
+                <button type="submit" class="btn-submit" id="btn-enviar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    Enviar Solicitação
+                </button>
+            </form>
+        </div>
+
+        <div class="safe-area-bottom"></div>
+    </div>
+
+    <!-- OVERLAY DE SUCESSO -->
+    <div id="success-overlay" class="success-overlay hidden">
+        <div class="success-content">
+            <div class="success-icon">✓</div>
+            <h2>Enviado!</h2>
+            <p>Sua solicitação foi registrada no sistema com sucesso.</p>
+            <div class="success-details" id="success-details"></div>
+            <button class="btn-nova-os" id="btn-nova-os">
+                + Nova Solicitação
+            </button>
+        </div>
+    </div>
+
+    <!-- TOAST DE NOTIFICAÇÃO -->
+    <div id="toast" class="toast hidden">
+        <span id="toast-msg"></span>
+    </div>
+
+    <script src="data-lists.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
