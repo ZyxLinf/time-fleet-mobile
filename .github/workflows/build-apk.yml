@@ -1,31 +1,52 @@
-name: 🤖 Build Android APK
+name: Criar APK para Android
+
 on:
   push:
     branches: [ main, master ]
   workflow_dispatch:
+
 jobs:
-  build-android:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-      - uses: actions/setup-node@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: npm install
-      - run: node build.js
-      - run: |
-          npx cap init "Time Fleet OS" "com.timefleet.solicitar" --web-dir dist
-          npx cap add android
-      - run: npx cap sync android
-      - run: chmod +x gradlew
-        working-directory: android
-      - run: ./gradlew assembleDebug --no-daemon
-        working-directory: android
-      - uses: actions/upload-artifact@v4
+
+      - name: Instalar dependências npm
+        run: npm ci
+
+      - name: Criar pasta dist
+        run: node build.js
+
+      - name: Instalar Capacitor CLI globalmente
+        run: npm install -g @capacitor/cli
+
+      - name: Adicionar plataforma Android
+        run: npx cap add android
+
+      - name: Sincronizar web com Android
+        run: npx cap sync android
+
+      - name: Permissão Gradle
+        run: chmod +x android/gradlew
+
+      - name: Build APK Debug
+        run: cd android && ./gradlew assembleDebug --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
           name: TimeFleet-OS-App
           path: android/app/build/outputs/apk/debug/app-debug.apk
