@@ -17,6 +17,7 @@ let serverUrl = '';
 let equipeAtual = 'mecanicos';
 let equipeSelecionada = [];
 let isSubmitting = false;
+let lastMainScreenId = 'screen-home';
 
 // ============================================================
 // INICIALIZAÇÃO
@@ -55,12 +56,12 @@ function inicializar() {
     if (!serverUrl) {
         mostrarTela('screen-config');
     } else {
-        mostrarTela('screen-form');
-        const bNav = document.getElementById('bottom-nav');
-        if (bNav) bNav.style.display = 'flex';
+        lastMainScreenId = 'screen-home';
+        mostrarTela('screen-home');
         verificarConexao();
         carregarEquipe('mecanicos');
         if (typeof preencherSelectsAquisicao === 'function') preencherSelectsAquisicao();
+        atualizarMenuAtivo('screen-home');
     }
 }
 
@@ -72,6 +73,46 @@ function mostrarTela(idTela) {
     const tela = document.getElementById(idTela);
     if (tela) {
         tela.classList.remove('hidden');
+    }
+}
+
+function irParaTela(idTela) {
+    if (idTela && idTela !== 'screen-config') {
+        lastMainScreenId = idTela;
+    }
+    mostrarTela(idTela);
+    atualizarMenuAtivo(idTela);
+}
+
+function atualizarMenuAtivo(idTela) {
+    document.querySelectorAll('.drawer-item[data-nav]').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-nav') === idTela);
+    });
+}
+
+function abrirDrawer() {
+    const drawer = document.getElementById('drawer');
+    const backdrop = document.getElementById('drawer-backdrop');
+    if (drawer) {
+        drawer.classList.add('open');
+        drawer.setAttribute('aria-hidden', 'false');
+    }
+    if (backdrop) {
+        backdrop.classList.add('open');
+        backdrop.setAttribute('aria-hidden', 'false');
+    }
+}
+
+function fecharDrawer() {
+    const drawer = document.getElementById('drawer');
+    const backdrop = document.getElementById('drawer-backdrop');
+    if (drawer) {
+        drawer.classList.remove('open');
+        drawer.setAttribute('aria-hidden', 'true');
+    }
+    if (backdrop) {
+        backdrop.classList.remove('open');
+        backdrop.setAttribute('aria-hidden', 'true');
     }
 }
 
@@ -101,13 +142,11 @@ document.getElementById('btn-salvar-config').addEventListener('click', async () 
         serverUrl = url;
         localStorage.setItem(STORAGE_KEY, serverUrl);
         input.value = '';
-        mostrarTela('screen-form');
-        const bNav = document.getElementById('bottom-nav');
-        if (bNav) bNav.style.display = 'flex';
+        irParaTela('screen-home');
         verificarConexao();
         carregarEquipe('mecanicos');
         if (typeof preencherSelectsAquisicao === 'function') preencherSelectsAquisicao();
-        showToast('Conectado com sucesso! ✓');
+        showToast('Conectado com sucesso!');
     } catch (err) {
         showToast(`Não foi possível conectar. Verifique o endereço e se o servidor está online.`);
     }
@@ -116,35 +155,35 @@ document.getElementById('btn-salvar-config').addEventListener('click', async () 
 // ============================================================
 // STATUS DE CONEXÃO
 // ============================================================
+function atualizarStatusConexao(state, message) {
+    document.querySelectorAll('[data-connection-status]').forEach(container => {
+        const dot = container.querySelector('[data-connection-dot]');
+        const txt = container.querySelector('[data-connection-text]');
+
+        if (dot) dot.className = `status-dot ${state}`;
+        if (txt) txt.textContent = message;
+    });
+}
+
 async function verificarConexao() {
-    const dot = document.querySelector('.status-dot');
-    const txt = document.getElementById('status-text');
-    
-    dot.className = 'status-dot checking';
-    txt.textContent = 'Verificando conexão...';
+    atualizarStatusConexao('checking', 'Verificando conexão...');
 
     try {
         const res = await fetch(`${serverUrl}/api/data`, { 
             signal: AbortSignal.timeout(5000) 
         });
-        if (res.ok) {
-            dot.className = 'status-dot online';
-            txt.textContent = `Conectado · ${new URL(serverUrl).hostname}`;
-        } else {
-            throw new Error();
-        }
+        if (!res.ok) throw new Error();
+        atualizarStatusConexao('online', `Conectado · ${new URL(serverUrl).hostname}`);
     } catch {
-        dot.className = 'status-dot offline';
-        txt.textContent = 'Sem conexão com o servidor';
+        atualizarStatusConexao('offline', 'Sem conexão com o servidor');
     }
 }
 
 // Verificar conexão a cada 30 segundos
 setInterval(() => {
-    if (serverUrl && document.getElementById('screen-form') && 
-        !document.getElementById('screen-form').classList.contains('hidden')) {
-        verificarConexao();
-    }
+    if (!serverUrl) return;
+    if (!document.getElementById('screen-config')?.classList.contains('hidden')) return;
+    verificarConexao();
 }, 30000);
 
 // ============================================================
@@ -166,7 +205,9 @@ function carregarEquipe(tipo) {
         const item = document.createElement('div');
         item.className = 'equipe-item';
         item.innerHTML = `
-            <div class="equipe-check">✓</div>
+            <div class="equipe-check">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
             <span>${nome}</span>
         `;
         item.addEventListener('click', () => toggleEquipe(item, nome));
@@ -189,6 +230,30 @@ function toggleEquipe(item, nome) {
 // REGISTRO DE EVENTOS
 // ============================================================
 function registrarEventos() {
+    // Drawer (menu lateral)
+    ['btn-menu-home', 'btn-menu-os', 'btn-menu-aq'].forEach(id => {
+        document.getElementById(id)?.addEventListener('click', abrirDrawer);
+    });
+    document.getElementById('btn-drawer-close')?.addEventListener('click', fecharDrawer);
+    document.getElementById('drawer-backdrop')?.addEventListener('click', fecharDrawer);
+
+    document.querySelectorAll('.drawer-item[data-nav]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            fecharDrawer();
+            irParaTela(btn.getAttribute('data-nav'));
+        });
+    });
+
+    // Ações da Home
+    document.getElementById('home-go-os')?.addEventListener('click', () => irParaTela('screen-form'));
+    document.getElementById('home-go-aq')?.addEventListener('click', () => irParaTela('screen-aquisicao'));
+
+    // Voltar na tela de configuração
+    document.getElementById('btn-voltar-config')?.addEventListener('click', () => {
+        if (serverUrl) irParaTela(lastMainScreenId || 'screen-home');
+        else mostrarTela('screen-config');
+    });
+
     // Tabs de equipe
     document.querySelectorAll('.equipe-tab').forEach(tab => {
         tab.addEventListener('click', () => {
@@ -199,16 +264,22 @@ function registrarEventos() {
     });
 
     // Botão de configuração
-    document.getElementById('btn-config').addEventListener('click', () => {
+    const abrirConfig = () => {
         const input = document.getElementById('config-server-url');
-        input.value = serverUrl;
+        if (input) input.value = serverUrl;
+        fecharDrawer();
         mostrarTela('screen-config');
+    };
+
+    ['btn-config', 'btn-config-aq', 'btn-config-home'].forEach(id => {
+        document.getElementById(id)?.addEventListener('click', abrirConfig);
     });
 
     // Botão nova O.S.
     document.getElementById('btn-nova-os').addEventListener('click', () => {
         document.getElementById('success-overlay').classList.add('hidden');
         resetarFormulario();
+        irParaTela('screen-form');
     });
 
     // Envio do formulário
@@ -287,10 +358,22 @@ async function enviarOS(e) {
 function mostrarSucesso(os) {
     const details = document.getElementById('success-details');
     details.innerHTML = `
-        🚗 <strong>Veículo:</strong> ${os.veiculo}<br>
-        🔧 <strong>Tipo:</strong> ${os.tipoServico}<br>
-        👷 <strong>Equipe:</strong> ${os.mecanicos.join(', ')}<br>
-        🕐 <strong>Horário:</strong> ${os.horaInicio}
+        <div class="success-line">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <div><strong>Veículo:</strong> ${os.veiculo}</div>
+        </div>
+        <div class="success-line">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            <div><strong>Tipo:</strong> ${os.tipoServico}</div>
+        </div>
+        <div class="success-line">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <div><strong>Equipe:</strong> ${os.mecanicos.join(', ')}</div>
+        </div>
+        <div class="success-line">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <div><strong>Horário:</strong> ${os.horaInicio}</div>
+        </div>
     `;
     document.getElementById('success-overlay').classList.remove('hidden');
 }
@@ -329,14 +412,6 @@ function showToast(msg, duration = 3000) {
 // ============================================================
 // NAVEGAÇÃO BOTTOM (ABAS)
 // ============================================================
-document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.bottom-nav-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        mostrarTela(btn.getAttribute('data-screen'));
-    });
-});
-
 // ============================================================
 // AQUISIÇÕES (MOBILE)
 // ============================================================
@@ -411,11 +486,28 @@ document.getElementById('form-aquisicao')?.addEventListener('submit', async (e) 
         if (!res.ok) throw new Error('Falha ao salvar a Aquisição.');
 
         document.getElementById('success-details-aq').innerHTML = `
-            ${novaAq.numeroCompra ? `🏷️ <strong>Nº Compra:</strong> ${novaAq.numeroCompra}<br>` : ''}
-            📦 <strong>Item:</strong> ${novaAq.item}<br>
-            🏪 <strong>Fornecedor:</strong> ${novaAq.fornecedor}<br>
-            👷 <strong>Responsável:</strong> ${novaAq.responsavel}<br>
-            📅 <strong>Data:</strong> ${novaAq.data.split('-').reverse().join('/')}
+            ${novaAq.numeroCompra ? `
+                <div class="success-line">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41L11 3.83A2 2 0 0 0 9.59 3H4a2 2 0 0 0-2 2v5.59A2 2 0 0 0 2.83 12l9.58 9.58a2 2 0 0 0 2.83 0l5.35-5.35a2 2 0 0 0 0-2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                    <div><strong>Nº Compra:</strong> ${novaAq.numeroCompra}</div>
+                </div>
+            ` : ''}
+            <div class="success-line">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                <div><strong>Item:</strong> ${novaAq.item}</div>
+            </div>
+            <div class="success-line">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4 8 4v14"/><path d="M9 9h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>
+                <div><strong>Fornecedor:</strong> ${novaAq.fornecedor}</div>
+            </div>
+            <div class="success-line">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <div><strong>Responsável:</strong> ${novaAq.responsavel}</div>
+            </div>
+            <div class="success-line">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <div><strong>Data:</strong> ${novaAq.data.split('-').reverse().join('/')}</div>
+            </div>
         `;
         document.getElementById('success-overlay-aq').classList.remove('hidden');
 
@@ -436,10 +528,5 @@ document.getElementById('btn-nova-aq')?.addEventListener('click', () => {
     document.getElementById('success-overlay-aq').classList.add('hidden');
     document.getElementById('form-aquisicao').reset();
     document.getElementById('aq-data-mobile').value = new Date().toISOString().split('T')[0];
-});
-
-document.getElementById('btn-config-aq')?.addEventListener('click', () => {
-    const input = document.getElementById('config-server-url');
-    input.value = serverUrl;
-    mostrarTela('screen-config');
+    irParaTela('screen-aquisicao');
 });
