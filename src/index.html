@@ -22,6 +22,37 @@
         </div>
     </div>
 
+    <!-- DRAWER / SIDEBAR -->
+    <div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true"></div>
+    <aside class="drawer" id="drawer" aria-hidden="true">
+        <div class="drawer-header">
+            <div class="drawer-brand">
+                <div class="app-icon">TF</div>
+                <div class="brand-text">
+                    <div class="brand-title">Time Fleet</div>
+                    <div class="brand-subtitle">Menu</div>
+                </div>
+            </div>
+            <button class="btn-icon" id="btn-drawer-close" type="button" title="Fechar menu" aria-label="Fechar menu">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <nav class="drawer-nav" aria-label="Navegação principal">
+            <button class="drawer-item" type="button" data-nav="screen-home" id="drawer-home">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7"/><path d="M9 22V12h6v10"/></svg>
+                Início
+            </button>
+            <button class="drawer-item" type="button" data-nav="screen-form" id="drawer-os">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                Solicitar O.S.
+            </button>
+            <button class="drawer-item" type="button" data-nav="screen-aquisicao" id="drawer-aq">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                Aquisição
+            </button>
+        </nav>
+    </aside>
+
     <!-- TELA: CONFIGURAR SERVIDOR -->
     <div id="screen-config" class="screen hidden">
         <div class="screen-content">
@@ -36,16 +67,71 @@
                 <small>Ex: http://192.168.1.5:7011 ou https://meusite.com.br</small>
             </div>
             <button class="btn-primary" id="btn-salvar-config">Conectar e Continuar</button>
+            <button class="btn-secondary" id="btn-voltar-config" type="button">Voltar</button>
         </div>
     </div>
 
     <!-- TELA: PRINCIPAL - FORMULÁRIO -->
+    <!-- TELA: HOME -->
+    <div id="screen-home" class="screen hidden">
+        <div class="app-header">
+            <div class="header-left">
+                <button class="btn-icon" id="btn-menu-home" type="button" title="Abrir menu" aria-label="Abrir menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <div class="app-icon">TF</div>
+                <div>
+                    <span class="app-title">Time Fleet</span>
+                    <span class="app-subtitle">Bem-vindo</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn-icon" id="btn-config-home" type="button" title="Configurações" aria-label="Configurações">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="connection-status" data-connection-status>
+            <div class="status-dot offline" data-connection-dot></div>
+            <span data-connection-text>Verificando conexão...</span>
+        </div>
+
+        <div class="form-scroll">
+            <div class="home-hero">
+                <h2>Bem-vindo ao Time Fleet</h2>
+                <p>Use o menu lateral para alternar entre as funções do app. Você pode solicitar uma O.S. ou registrar uma aquisição de itens.</p>
+
+                <div class="home-actions">
+                    <button class="home-action" type="button" id="home-go-os">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        <div>
+                            <div class="title">Solicitar O.S.</div>
+                            <span class="subtitle">Abrir um chamado de serviço</span>
+                        </div>
+                    </button>
+                    <button class="home-action" type="button" id="home-go-aq">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                        <div>
+                            <div class="title">Aquisição</div>
+                            <span class="subtitle">Registrar compra emergencial</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="screen-form" class="screen hidden">
-        <div class="safe-area-top"></div>
-        
         <!-- HEADER -->
         <div class="app-header">
             <div class="header-left">
+                <button class="btn-icon" id="btn-menu-os" type="button" title="Abrir menu" aria-label="Abrir menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
                 <div class="app-icon">TF</div>
                 <div>
                     <span class="app-title">Time Fleet</span>
@@ -61,9 +147,9 @@
         </div>
 
         <!-- STATUS DE CONEXÃO -->
-        <div id="connection-status" class="connection-status">
-            <div class="status-dot offline"></div>
-            <span id="status-text">Verificando conexão...</span>
+        <div class="connection-status" data-connection-status>
+            <div class="status-dot offline" data-connection-dot></div>
+            <span data-connection-text>Verificando conexão...</span>
         </div>
 
         <!-- FORMULÁRIO -->
@@ -93,28 +179,28 @@
                         <label class="type-option">
                             <input type="radio" name="tipo-servico" value="Corretivo" required>
                             <div class="type-card">
-                                <span class="type-emoji">🔧</span>
+                                <svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
                                 <span>Corretivo</span>
                             </div>
                         </label>
                         <label class="type-option">
                             <input type="radio" name="tipo-servico" value="Preventivo">
                             <div class="type-card">
-                                <span class="type-emoji">🛡️</span>
+                                <svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 9.4-8 10-4.6-.6-8-5-8-10V6l8-4z"/></svg>
                                 <span>Preventivo</span>
                             </div>
                         </label>
                         <label class="type-option">
                             <input type="radio" name="tipo-servico" value="Elétrico">
                             <div class="type-card">
-                                <span class="type-emoji">⚡</span>
+                                <svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 12-14h-7l1-6z"/></svg>
                                 <span>Elétrico</span>
                             </div>
                         </label>
                         <label class="type-option">
                             <input type="radio" name="tipo-servico" value="Preditivo">
                             <div class="type-card">
-                                <span class="type-emoji">📊</span>
+                                <svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
                                 <span>Preditivo</span>
                             </div>
                         </label>
@@ -128,9 +214,18 @@
                         Equipe Responsável
                     </div>
                     <div class="equipe-tabs">
-                        <button type="button" class="equipe-tab active" data-equipe="mecanicos">🔩 Oficina</button>
-                        <button type="button" class="equipe-tab" data-equipe="lavadores">🚿 Lavagem</button>
-                        <button type="button" class="equipe-tab" data-equipe="borracheiros">🔴 Borracharia</button>
+                        <button type="button" class="equipe-tab active" data-equipe="mecanicos">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                            Oficina
+                        </button>
+                        <button type="button" class="equipe-tab" data-equipe="lavadores">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.7c3.3 4 6 7.2 6 11a6 6 0 0 1-12 0c0-3.8 2.7-7 6-11z"/></svg>
+                            Lavagem
+                        </button>
+                        <button type="button" class="equipe-tab" data-equipe="borracheiros">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
+                            Borracharia
+                        </button>
                     </div>
                     <div class="form-group" style="margin-top: 12px;">
                         <label>Selecione o(s) responsável(is)</label>
@@ -159,102 +254,133 @@
             </form>
         </div>
 
-        <div class="safe-area-bottom"></div>
     </div>
 
     <!-- TELA: AQUISIÇÃO DE ITENS -->
     <div class="screen hidden" id="screen-aquisicao">
         <div class="app-header">
             <div class="header-left">
-                <button class="icon-btn" id="btn-config-aq">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <button class="btn-icon" id="btn-menu-aq" type="button" title="Abrir menu" aria-label="Abrir menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                 </button>
-            </div>
-            <div class="header-title">
-                <span class="app-name">Aquisição de Itens</span>
-                <div class="status-bar">
-                    <div class="status-dot checking" id="status-dot-aq"></div>
-                    <span id="status-text-aq">Verificando...</span>
+                <div class="app-icon">TF</div>
+                <div>
+                    <span class="app-title">Time Fleet</span>
+                    <span class="app-subtitle">Aquisição</span>
                 </div>
             </div>
+            <button class="btn-icon" id="btn-config-aq" type="button" title="Configurações" aria-label="Configurações">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="connection-status" data-connection-status>
+            <div class="status-dot offline" data-connection-dot></div>
+            <span data-connection-text>Verificando conexão...</span>
         </div>
 
         <div class="form-scroll">
             <form id="form-aquisicao">
                 <div class="form-card">
-                    <div class="form-card-title">📦 Item / Material</div>
-                    <div class="form-group-native">
-                        <input class="input-native" type="text" id="aq-compra-mobile" placeholder="Nº da Compra (opcional)">
+                    <div class="form-card-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                        Item / Material
                     </div>
-                    <div class="form-group-native">
-                        <input class="input-native" type="text" id="aq-item-mobile" placeholder="Nome do material ou peça *" required>
+                    <div class="form-group">
+                        <label>Nº da Compra (opcional)</label>
+                        <input type="text" id="aq-compra-mobile" placeholder="Ex: 123456">
                     </div>
-                    <div class="form-group-native">
-                        <input class="input-native" type="date" id="aq-data-mobile">
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label>Material ou peça *</label>
+                        <input type="text" id="aq-item-mobile" placeholder="Ex: filtro de óleo" required>
+                    </div>
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label>Data</label>
+                        <input type="date" id="aq-data-mobile">
                     </div>
                 </div>
 
                 <div class="form-card">
-                    <div class="form-card-title">🏪 Fornecedor</div>
-                    <div class="form-group-native">
-                        <input class="input-native" type="text" id="aq-fornecedor-mobile" list="aq-forn-list-mobile" placeholder="Nome do estabelecimento *" required>
+                    <div class="form-card-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4 8 4v14"/><path d="M9 9h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>
+                        Fornecedor
+                    </div>
+                    <div class="form-group">
+                        <label>Nome do estabelecimento *</label>
+                        <input type="text" id="aq-fornecedor-mobile" list="aq-forn-list-mobile" placeholder="Ex: Auto Peças Central" required>
                         <datalist id="aq-forn-list-mobile"></datalist>
                     </div>
                 </div>
 
                 <div class="form-card">
-                    <div class="form-card-title">🚗 Veículo Destino</div>
-                    <div class="form-group-native">
-                        <input class="input-native" type="text" id="aq-veiculo-mobile" list="aq-veic-list-mobile" placeholder="Para qual veículo?">
+                    <div class="form-card-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                        Veículo Destino
+                    </div>
+                    <div class="form-group">
+                        <label>Para qual veículo?</label>
+                        <input type="text" id="aq-veiculo-mobile" list="aq-veic-list-mobile" placeholder="Ex: EMP001">
                         <datalist id="aq-veic-list-mobile"></datalist>
                     </div>
                 </div>
 
                 <div class="form-card">
-                    <div class="form-card-title">📋 Detalhes</div>
+                    <div class="form-card-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        Detalhes
+                    </div>
                     <div class="form-row-native">
-                        <div class="form-group-native" style="flex:1;">
-                            <label class="input-label">Qtde *</label>
-                            <input class="input-native" type="number" id="aq-qtd-mobile" min="1" placeholder="1">
+                        <div class="form-group" style="flex:1;">
+                            <label>Qtde *</label>
+                            <input type="number" id="aq-qtd-mobile" min="1" placeholder="1">
                         </div>
-                        <div class="form-group-native" style="flex:1;">
-                            <label class="input-label">Valor (R$)</label>
-                            <input class="input-native" type="number" id="aq-valor-mobile" step="0.01" min="0" placeholder="0,00">
+                        <div class="form-group" style="flex:1;">
+                            <label>Valor (R$)</label>
+                            <input type="number" id="aq-valor-mobile" step="0.01" min="0" placeholder="0,00">
                         </div>
                     </div>
                 </div>
 
                 <div class="form-card">
-                    <div class="form-card-title">👷 Responsável</div>
-                    <div class="equipe-tabs" id="equipe-tabs-aq" style="display:none;">
+                    <div class="form-card-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        Responsável
                     </div>
-                    <div class="form-group-native">
-                        <select class="input-native" id="aq-resp-mobile">
+                    <div class="form-group">
+                        <label>Selecionar quem buscou *</label>
+                        <select id="aq-resp-mobile">
                             <option value="">Selecionar quem buscou *</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-card">
-                    <div class="form-card-title">📝 Observações</div>
-                    <div class="form-group-native">
-                        <textarea class="input-native" id="aq-obs-mobile" rows="4" placeholder="Informações adicionais, contexto da aquisição emergencial..."></textarea>
+                    <div class="form-card-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        Observações
+                    </div>
+                    <div class="form-group">
+                        <label>Informações adicionais</label>
+                        <textarea id="aq-obs-mobile" rows="4" placeholder="Contexto da aquisição emergencial..."></textarea>
                     </div>
                 </div>
 
-                <div class="form-actions-native">
-                    <button type="submit" class="btn-submit" id="btn-enviar-aq">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                        Registrar Aquisição
-                    </button>
-                </div>
+                <button type="submit" class="btn-submit" id="btn-enviar-aq">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    Registrar Aquisição
+                </button>
             </form>
         </div>
         
         <!-- Success overlay for acquisitions -->
         <div class="success-overlay hidden" id="success-overlay-aq">
-            <div class="success-card">
-                <div class="success-icon">📦</div>
+            <div class="success-content">
+                <div class="success-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+                </div>
                 <h2>Aquisição Registrada!</h2>
                 <p>O registro foi enviado com sucesso para o sistema.</p>
                 <div class="success-details" id="success-details-aq"></div>
@@ -263,22 +389,12 @@
         </div>
     </div>
 
-    <!-- BOTTOM NAV -->
-    <nav class="bottom-nav" id="bottom-nav" style="display:none;">
-        <button class="bottom-nav-btn active" data-screen="screen-form" id="nav-os">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            <span>Solicitar O.S.</span>
-        </button>
-        <button class="bottom-nav-btn" data-screen="screen-aquisicao" id="nav-aq">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-            <span>Aquisição</span>
-        </button>
-    </nav>
-
     <!-- OVERLAY DE SUCESSO -->
     <div id="success-overlay" class="success-overlay hidden">
         <div class="success-content">
-            <div class="success-icon">✓</div>
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
             <h2>Enviado!</h2>
             <p>Sua solicitação foi registrada no sistema com sucesso.</p>
             <div class="success-details" id="success-details"></div>
