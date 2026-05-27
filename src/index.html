@@ -162,6 +162,119 @@
         <div class="safe-area-bottom"></div>
     </div>
 
+    <!-- TELA: AQUISIÇÃO DE ITENS -->
+    <div class="screen hidden" id="screen-aquisicao">
+        <div class="app-header">
+            <div class="header-left">
+                <button class="icon-btn" id="btn-config-aq">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </button>
+            </div>
+            <div class="header-title">
+                <span class="app-name">Aquisição de Itens</span>
+                <div class="status-bar">
+                    <div class="status-dot checking" id="status-dot-aq"></div>
+                    <span id="status-text-aq">Verificando...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-scroll">
+            <form id="form-aquisicao">
+                <div class="form-card">
+                    <div class="form-card-title">📦 Item / Material</div>
+                    <div class="form-group-native">
+                        <input class="input-native" type="text" id="aq-compra-mobile" placeholder="Nº da Compra (opcional)">
+                    </div>
+                    <div class="form-group-native">
+                        <input class="input-native" type="text" id="aq-item-mobile" placeholder="Nome do material ou peça *" required>
+                    </div>
+                    <div class="form-group-native">
+                        <input class="input-native" type="date" id="aq-data-mobile">
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-title">🏪 Fornecedor</div>
+                    <div class="form-group-native">
+                        <input class="input-native" type="text" id="aq-fornecedor-mobile" list="aq-forn-list-mobile" placeholder="Nome do estabelecimento *" required>
+                        <datalist id="aq-forn-list-mobile"></datalist>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-title">🚗 Veículo Destino</div>
+                    <div class="form-group-native">
+                        <input class="input-native" type="text" id="aq-veiculo-mobile" list="aq-veic-list-mobile" placeholder="Para qual veículo?">
+                        <datalist id="aq-veic-list-mobile"></datalist>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-title">📋 Detalhes</div>
+                    <div class="form-row-native">
+                        <div class="form-group-native" style="flex:1;">
+                            <label class="input-label">Qtde *</label>
+                            <input class="input-native" type="number" id="aq-qtd-mobile" min="1" placeholder="1">
+                        </div>
+                        <div class="form-group-native" style="flex:1;">
+                            <label class="input-label">Valor (R$)</label>
+                            <input class="input-native" type="number" id="aq-valor-mobile" step="0.01" min="0" placeholder="0,00">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-title">👷 Responsável</div>
+                    <div class="equipe-tabs" id="equipe-tabs-aq" style="display:none;">
+                    </div>
+                    <div class="form-group-native">
+                        <select class="input-native" id="aq-resp-mobile">
+                            <option value="">Selecionar quem buscou *</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-title">📝 Observações</div>
+                    <div class="form-group-native">
+                        <textarea class="input-native" id="aq-obs-mobile" rows="4" placeholder="Informações adicionais, contexto da aquisição emergencial..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions-native">
+                    <button type="submit" class="btn-submit" id="btn-enviar-aq">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        Registrar Aquisição
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Success overlay for acquisitions -->
+        <div class="success-overlay hidden" id="success-overlay-aq">
+            <div class="success-card">
+                <div class="success-icon">📦</div>
+                <h2>Aquisição Registrada!</h2>
+                <p>O registro foi enviado com sucesso para o sistema.</p>
+                <div class="success-details" id="success-details-aq"></div>
+                <button class="btn-submit" id="btn-nova-aq" style="margin-top:24px;">Registrar Nova</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav" id="bottom-nav" style="display:none;">
+        <button class="bottom-nav-btn active" data-screen="screen-form" id="nav-os">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span>Solicitar O.S.</span>
+        </button>
+        <button class="bottom-nav-btn" data-screen="screen-aquisicao" id="nav-aq">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span>Aquisição</span>
+        </button>
+    </nav>
+
     <!-- OVERLAY DE SUCESSO -->
     <div id="success-overlay" class="success-overlay hidden">
         <div class="success-content">
