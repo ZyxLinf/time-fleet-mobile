@@ -56,8 +56,11 @@ function inicializar() {
         mostrarTela('screen-config');
     } else {
         mostrarTela('screen-form');
+        const bNav = document.getElementById('bottom-nav');
+        if (bNav) bNav.style.display = 'flex';
         verificarConexao();
         carregarEquipe('mecanicos');
+        if (typeof preencherSelectsAquisicao === 'function') preencherSelectsAquisicao();
     }
 }
 
@@ -99,8 +102,11 @@ document.getElementById('btn-salvar-config').addEventListener('click', async () 
         localStorage.setItem(STORAGE_KEY, serverUrl);
         input.value = '';
         mostrarTela('screen-form');
+        const bNav = document.getElementById('bottom-nav');
+        if (bNav) bNav.style.display = 'flex';
         verificarConexao();
         carregarEquipe('mecanicos');
+        if (typeof preencherSelectsAquisicao === 'function') preencherSelectsAquisicao();
         showToast('Conectado com sucesso! ✓');
     } catch (err) {
         showToast(`Não foi possível conectar. Verifique o endereço e se o servidor está online.`);
@@ -319,3 +325,121 @@ function showToast(msg, duration = 3000) {
         }, duration);
     }
 }
+
+// ============================================================
+// NAVEGAÇÃO BOTTOM (ABAS)
+// ============================================================
+document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.bottom-nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        mostrarTela(btn.getAttribute('data-screen'));
+    });
+});
+
+// ============================================================
+// AQUISIÇÕES (MOBILE)
+// ============================================================
+function preencherSelectsAquisicao() {
+    // Fornecedores
+    const dlForn = document.getElementById('aq-forn-list-mobile');
+    if (dlForn && typeof fornecedores !== 'undefined') {
+        dlForn.innerHTML = fornecedores.map(f => `<option value="${f.razaoSocial}">`).join('');
+    }
+    // Veículos
+    const dlVeic = document.getElementById('aq-veic-list-mobile');
+    if (dlVeic && typeof veiculos !== 'undefined') {
+        dlVeic.innerHTML = veiculos.map(v => `<option value="${v.split(' - ')[0]}">`).join('');
+    }
+    // Responsáveis (mecânicos)
+    const selResp = document.getElementById('aq-resp-mobile');
+    if (selResp && typeof mecanicos !== 'undefined') {
+        selResp.innerHTML = '<option value="">Selecionar quem buscou *</option>' +
+            mecanicos.map(m => `<option value="${m}">${m}</option>`).join('');
+    }
+    // Data atual
+    const hoje = new Date().toISOString().split('T')[0];
+    const inpData = document.getElementById('aq-data-mobile');
+    if (inpData) inpData.value = hoje;
+}
+
+document.getElementById('form-aquisicao')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (isSubmitting) return;
+
+    const numeroCompra = document.getElementById('aq-compra-mobile').value.trim();
+    const item = document.getElementById('aq-item-mobile').value.trim();
+    const data = document.getElementById('aq-data-mobile').value;
+    const fornecedor = document.getElementById('aq-fornecedor-mobile').value.trim();
+    const veiculo = document.getElementById('aq-veiculo-mobile').value.trim();
+    const quantidade = document.getElementById('aq-qtd-mobile').value;
+    const valor = document.getElementById('aq-valor-mobile').value;
+    const responsavel = document.getElementById('aq-resp-mobile').value;
+    const obs = document.getElementById('aq-obs-mobile').value.trim();
+
+    if (!item) { showToast('Informe o item/material.'); return; }
+    if (!fornecedor) { showToast('Informe o fornecedor.'); return; }
+    if (!quantidade) { showToast('Informe a quantidade.'); return; }
+    if (!responsavel) { showToast('Selecione o responsável.'); return; }
+
+    const btn = document.getElementById('btn-enviar-aq');
+    btn.disabled = true;
+    btn.innerHTML = '<span style="opacity:.7">Enviando...</span>';
+    isSubmitting = true;
+
+    const novaAq = {
+        id: Date.now().toString(),
+        numeroCompra, item, data, fornecedor, veiculo, 
+        quantidade: parseInt(quantidade), 
+        valor: valor ? parseFloat(valor) : null, 
+        responsavel, 
+        status: 'em-execucao', 
+        motivo: '', 
+        obs, 
+        origem: 'mobile-app', 
+        criadoEm: new Date().toISOString()
+    };
+
+    try {
+        const res = await fetch(`${serverUrl}/api/aquisicao`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(novaAq),
+            signal: AbortSignal.timeout(8000)
+        });
+        
+        if (!res.ok) throw new Error('Falha ao salvar a Aquisição.');
+
+        document.getElementById('success-details-aq').innerHTML = `
+            ${novaAq.numeroCompra ? `🏷️ <strong>Nº Compra:</strong> ${novaAq.numeroCompra}<br>` : ''}
+            📦 <strong>Item:</strong> ${novaAq.item}<br>
+            🏪 <strong>Fornecedor:</strong> ${novaAq.fornecedor}<br>
+            👷 <strong>Responsável:</strong> ${novaAq.responsavel}<br>
+            📅 <strong>Data:</strong> ${novaAq.data.split('-').reverse().join('/')}
+        `;
+        document.getElementById('success-overlay-aq').classList.remove('hidden');
+
+    } catch (err) {
+        console.error(err);
+        showToast('Erro de conexão. Verifique se o servidor está online e tente novamente.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Registrar Aquisição
+        `;
+        isSubmitting = false;
+    }
+});
+
+document.getElementById('btn-nova-aq')?.addEventListener('click', () => {
+    document.getElementById('success-overlay-aq').classList.add('hidden');
+    document.getElementById('form-aquisicao').reset();
+    document.getElementById('aq-data-mobile').value = new Date().toISOString().split('T')[0];
+});
+
+document.getElementById('btn-config-aq')?.addEventListener('click', () => {
+    const input = document.getElementById('config-server-url');
+    input.value = serverUrl;
+    mostrarTela('screen-config');
+});
