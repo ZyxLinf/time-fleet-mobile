@@ -737,3 +737,228 @@ document.getElementById('btn-nova-aq')?.addEventListener('click', () => {
     document.getElementById('success-overlay-aq').classList.add('hidden');
     iniciarNovaAquisicaoMobile();
 });
+
+// ============================================================
+// CALENDÁRIO MOBILE
+// ============================================================
+let dataAtual = new Date();
+let eventosMobile = [];
+let allOSsMobile = [];
+
+function initCalendarMobile() {
+    document.getElementById('btn-menu-calendar')?.addEventListener('click', abrirDrawer);
+    document.getElementById('drawer-calendar')?.addEventListener('click', () => {
+        fecharDrawer();
+        irParaTela('screen-calendar');
+        loadAllCalendarData();
+    });
+    document.getElementById('home-go-calendar')?.addEventListener('click', () => {
+        irParaTela('screen-calendar');
+        loadAllCalendarData();
+    });
+    
+    document.getElementById('btn-prev-month')?.addEventListener('click', () => {
+        dataAtual.setMonth(dataAtual.getMonth() - 1);
+        renderCalendarMobile();
+    });
+    document.getElementById('btn-next-month')?.addEventListener('click', () => {
+        dataAtual.setMonth(dataAtual.getMonth() + 1);
+        renderCalendarMobile();
+    });
+    document.getElementById('btn-hoje')?.addEventListener('click', () => {
+        dataAtual = new Date();
+        renderCalendarMobile();
+    });
+    
+    // Config do modal de evento
+    document.getElementById('btn-novo-evento')?.addEventListener('click', () => {
+        document.getElementById('form-evento').reset();
+        document.getElementById('ev-data').value = new Date().toISOString().split('T')[0];
+        document.getElementById('event-modal').classList.remove('hidden');
+    });
+    document.getElementById('btn-cancel-evento')?.addEventListener('click', () => {
+        document.getElementById('event-modal').classList.add('hidden');
+    });
+    document.getElementById('form-evento')?.addEventListener('submit', salvarEventoMobile);
+    
+    // Sheet actions
+    document.getElementById('event-details-backdrop')?.addEventListener('click', closeEventSheet);
+    document.getElementById('btn-event-action-cancel')?.addEventListener('click', closeEventSheet);
+    document.getElementById('btn-event-delete')?.addEventListener('click', deleteEventMobile);
+}
+
+async function loadAllCalendarData() {
+    try {
+        const [resEv, resOs] = await Promise.all([
+            fetch(`${serverUrl}/api/eventos`).catch(()=>null),
+            fetch(`${serverUrl}/api/os`).catch(()=>null)
+        ]);
+        
+        if (resEv && resEv.ok) eventosMobile = await resEv.json();
+        if (resOs && resOs.ok) allOSsMobile = await resOs.json();
+        
+        // As aquisições já foram carregadas em aquisicoesMobile
+        renderCalendarMobile();
+    } catch (e) {
+        console.error('Erro ao carregar dados do calendário', e);
+        renderCalendarMobile();
+    }
+}
+
+function renderCalendarMobile() {
+    const grid = document.getElementById('calendar-grid');
+    if (!grid) return;
+    
+    const year = dataAtual.getFullYear();
+    const month = dataAtual.getMonth();
+    
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+    document.getElementById('current-month-display').textContent = `${monthNames[month]} ${year}`;
+    
+    grid.innerHTML = '';
+    
+    for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-day empty';
+        grid.appendChild(emptyCell);
+    }
+    
+    const hoje = new Date();
+    
+    for (let day = 1; day <= daysInMonth; day++) {
+        const cell = document.createElement('div');
+        cell.className = 'calendar-day';
+        if (year === hoje.getFullYear() && month === hoje.getMonth() && day === hoje.getDate()) {
+            cell.classList.add('today');
+        }
+        
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        
+        cell.innerHTML = `<div class="day-number">${day}</div>`;
+        
+        // Find events
+        const evs = eventosMobile.filter(e => e.data === dateStr);
+        const oss = allOSsMobile.filter(o => o.data === dateStr);
+        const aqs = aquisicoesMobile.filter(a => a.data === dateStr);
+        
+        evs.forEach(ev => {
+            const el = document.createElement('div');
+            el.className = `cal-event ev-${ev.criticidade}`;
+            el.textContent = ev.titulo;
+            el.onclick = (e) => { e.stopPropagation(); openEventSheet(ev, 'evento'); };
+            cell.appendChild(el);
+        });
+        
+        oss.forEach(os => {
+            const el = document.createElement('div');
+            el.className = `cal-event ev-os`;
+            el.textContent = `OS: ${os.veiculo}`;
+            el.onclick = (e) => { e.stopPropagation(); openEventSheet(os, 'os'); };
+            cell.appendChild(el);
+        });
+        
+        aqs.forEach(aq => {
+            const el = document.createElement('div');
+            el.className = `cal-event ev-aq`;
+            el.textContent = `Aq: ${aq.item}`;
+            el.onclick = (e) => { e.stopPropagation(); openEventSheet(aq, 'aquisicao'); };
+            cell.appendChild(el);
+        });
+        
+        grid.appendChild(cell);
+    }
+}
+
+async function salvarEventoMobile(e) {
+    e.preventDefault();
+    const titulo = document.getElementById('ev-titulo').value.trim();
+    const data = document.getElementById('ev-data').value;
+    const tipo = document.getElementById('ev-tipo').value;
+    const criticidade = document.getElementById('ev-criticidade').value;
+    
+    if (!titulo || !data) return;
+    
+    const novo = {
+        id: Date.now().toString(),
+        titulo, data, tipo, criticidade,
+        criadoEm: new Date().toISOString()
+    };
+    
+    try {
+        const res = await fetch(`${serverUrl}/api/eventos`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(novo)
+        });
+        if(res.ok) {
+            document.getElementById('event-modal').classList.add('hidden');
+            showToast('Evento criado!');
+            loadAllCalendarData();
+        }
+    } catch(err) {
+        showToast('Erro ao criar evento.');
+    }
+}
+
+let currentSelectedEvent = null;
+let currentSelectedEventType = null;
+
+function openEventSheet(item, type) {
+    currentSelectedEvent = item;
+    currentSelectedEventType = type;
+    
+    const titleEl = document.getElementById('sheet-event-title');
+    const typeEl = document.getElementById('sheet-event-type');
+    const dateEl = document.getElementById('sheet-event-date');
+    const delBtn = document.getElementById('btn-event-delete');
+    
+    delBtn.style.display = 'none'; // Only allow delete for events, not OS/Aq here to keep simple
+    
+    if (type === 'evento') {
+        titleEl.textContent = item.titulo;
+        typeEl.textContent = `Lembrete - Criticidade: ${item.criticidade}`;
+        delBtn.style.display = 'flex';
+    } else if (type === 'os') {
+        titleEl.textContent = `O.S. Veículo: ${item.veiculo}`;
+        typeEl.textContent = `Tipo: ${item.tipoServico} - ${item.status}`;
+    } else {
+        titleEl.textContent = `Aquisição: ${item.item}`;
+        typeEl.textContent = `Para: ${item.veiculo || 'Estoque'} - ${item.status}`;
+    }
+    
+    dateEl.textContent = item.data.split('-').reverse().join('/');
+    
+    document.getElementById('event-details-backdrop').classList.remove('hidden');
+    document.getElementById('event-details-sheet').classList.remove('hidden');
+}
+
+function closeEventSheet() {
+    document.getElementById('event-details-backdrop').classList.add('hidden');
+    document.getElementById('event-details-sheet').classList.add('hidden');
+    currentSelectedEvent = null;
+}
+
+async function deleteEventMobile() {
+    if(!currentSelectedEvent || currentSelectedEventType !== 'evento') return;
+    
+    if(!confirm('Excluir este evento?')) return;
+    
+    try {
+        const res = await fetch(`${serverUrl}/api/eventos/${currentSelectedEvent.id}`, { method: 'DELETE' });
+        if(res.ok) {
+            closeEventSheet();
+            showToast('Evento excluído.');
+            loadAllCalendarData();
+        }
+    } catch(e) {
+        showToast('Erro ao excluir evento.');
+    }
+}
+
+// Inicializar calendário ao fim do DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    initCalendarMobile();
+});
