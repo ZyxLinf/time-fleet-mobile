@@ -18,6 +18,9 @@ let equipeAtual = 'mecanicos';
 let equipeSelecionada = [];
 let isSubmitting = false;
 let lastMainScreenId = 'screen-home';
+let aquisicoesMobile = [];
+let selectedAquisicaoMobileId = '';
+let editingAquisicaoMobileId = '';
 
 // ============================================================
 // INICIALIZAÇÃO
@@ -59,6 +62,7 @@ function inicializar() {
         lastMainScreenId = 'screen-home';
         mostrarTela('screen-home');
         verificarConexao();
+        carregarAquisicoesMobile();
         carregarEquipe('mecanicos');
         if (typeof preencherSelectsAquisicao === 'function') preencherSelectsAquisicao();
         atualizarMenuAtivo('screen-home');
@@ -82,6 +86,7 @@ function irParaTela(idTela) {
     }
     mostrarTela(idTela);
     atualizarMenuAtivo(idTela);
+    if (idTela === 'screen-home' && serverUrl) carregarAquisicoesMobile();
 }
 
 function atualizarMenuAtivo(idTela) {
@@ -144,6 +149,7 @@ document.getElementById('btn-salvar-config').addEventListener('click', async () 
         input.value = '';
         irParaTela('screen-home');
         verificarConexao();
+        carregarAquisicoesMobile();
         carregarEquipe('mecanicos');
         if (typeof preencherSelectsAquisicao === 'function') preencherSelectsAquisicao();
         showToast('Conectado com sucesso!');
@@ -246,7 +252,18 @@ function registrarEventos() {
 
     // Ações da Home
     document.getElementById('home-go-os')?.addEventListener('click', () => irParaTela('screen-form'));
-    document.getElementById('home-go-aq')?.addEventListener('click', () => irParaTela('screen-aquisicao'));
+    document.getElementById('home-go-aq')?.addEventListener('click', iniciarNovaAquisicaoMobile);
+    document.getElementById('btn-home-new-aq')?.addEventListener('click', iniciarNovaAquisicaoMobile);
+    document.getElementById('btn-refresh-aq-list')?.addEventListener('click', carregarAquisicoesMobile);
+
+    document.getElementById('aq-action-backdrop')?.addEventListener('click', fecharMenuAquisicaoMobile);
+    document.getElementById('btn-aq-action-cancel')?.addEventListener('click', fecharMenuAquisicaoMobile);
+    document.getElementById('btn-aq-edit')?.addEventListener('click', editarAquisicaoMobileSelecionada);
+    document.getElementById('btn-aq-delete')?.addEventListener('click', excluirAquisicaoMobileSelecionada);
+    document.getElementById('btn-aq-not-done')?.addEventListener('click', abrirMotivoNaoRealizadoMobile);
+    document.getElementById('btn-aq-reason-cancel')?.addEventListener('click', fecharMotivoNaoRealizadoMobile);
+    document.getElementById('btn-aq-reason-save')?.addEventListener('click', salvarNaoRealizadoMobile);
+    document.getElementById('btn-cancel-edit-aq')?.addEventListener('click', iniciarNovaAquisicaoMobile);
 
     // Voltar na tela de configuração
     document.getElementById('btn-voltar-config')?.addEventListener('click', () => {
@@ -438,6 +455,191 @@ function preencherSelectsAquisicao() {
     if (inpData) inpData.value = hoje;
 }
 
+function statusAquisicaoLabel(status) {
+    return {
+        'concluido': 'Concluído',
+        'em-execucao': 'Em execução',
+        'nao-concluido': 'Não realizado'
+    }[status] || 'Em execução';
+}
+
+function formatarDataMobile(data) {
+    if (!data) return '-';
+    const partes = data.split('-');
+    if (partes.length !== 3) return data;
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+function getAquisicaoMobileSelecionada() {
+    return aquisicoesMobile.find(a => a.id === selectedAquisicaoMobileId) || null;
+}
+
+async function carregarAquisicoesMobile() {
+    const list = document.getElementById('aq-list-mobile');
+    const count = document.getElementById('aq-list-count');
+    if (!list || !serverUrl) return;
+
+    list.innerHTML = '<div class="empty-state">Carregando solicitações...</div>';
+    if (count) count.textContent = 'Carregando...';
+
+    try {
+        const res = await fetch(`${serverUrl}/api/aquisicoes`, {
+            signal: AbortSignal.timeout(8000)
+        });
+        if (!res.ok) throw new Error('Falha ao carregar aquisições.');
+
+        aquisicoesMobile = await res.json();
+        renderAquisicoesMobile();
+    } catch (err) {
+        console.error(err);
+        list.innerHTML = '<div class="empty-state">Não foi possível carregar as solicitações.</div>';
+        if (count) count.textContent = 'Erro ao carregar';
+    }
+}
+
+function renderAquisicoesMobile() {
+    const list = document.getElementById('aq-list-mobile');
+    const count = document.getElementById('aq-list-count');
+    if (!list) return;
+
+    const ordenadas = [...aquisicoesMobile].sort((a, b) => {
+        const dataB = new Date(b.criadoEm || b.data || 0).getTime();
+        const dataA = new Date(a.criadoEm || a.data || 0).getTime();
+        return dataB - dataA;
+    });
+
+    if (count) count.textContent = `${ordenadas.length} solicitação${ordenadas.length === 1 ? '' : 'es'}`;
+
+    if (!ordenadas.length) {
+        list.innerHTML = '<div class="empty-state">Nenhuma solicitação de aquisição registrada.</div>';
+        return;
+    }
+
+    list.innerHTML = ordenadas.map(a => `
+        <button class="aq-list-item" type="button" data-id="${a.id}">
+            <div class="aq-list-head">
+                <div class="aq-list-title">${a.item || '-'}</div>
+                <span class="status-pill ${a.status || 'em-execucao'}">${statusAquisicaoLabel(a.status)}</span>
+            </div>
+            <div class="aq-list-meta">
+                <span>Fornecedor: ${a.fornecedor || '-'}</span>
+                <span>Veículo: ${a.veiculo || '-'}</span>
+                <span>Responsável: ${a.responsavel || '-'} · ${formatarDataMobile(a.data)}</span>
+                ${a.status === 'nao-concluido' && a.motivo ? `<span>Motivo: ${a.motivo}</span>` : ''}
+            </div>
+        </button>
+    `).join('');
+
+    list.querySelectorAll('.aq-list-item').forEach(item => {
+        item.addEventListener('click', () => abrirMenuAquisicaoMobile(item.getAttribute('data-id')));
+    });
+}
+
+function abrirMenuAquisicaoMobile(id) {
+    selectedAquisicaoMobileId = id;
+    const aq = getAquisicaoMobileSelecionada();
+    if (!aq) return;
+
+    document.getElementById('aq-action-title').textContent = aq.item || 'Solicitação';
+    document.getElementById('aq-action-subtitle').textContent = `${aq.fornecedor || '-'} · ${statusAquisicaoLabel(aq.status)}`;
+    document.getElementById('aq-action-backdrop').classList.remove('hidden');
+    document.getElementById('aq-action-sheet').classList.remove('hidden');
+}
+
+function fecharMenuAquisicaoMobile() {
+    document.getElementById('aq-action-backdrop')?.classList.add('hidden');
+    document.getElementById('aq-action-sheet')?.classList.add('hidden');
+}
+
+function iniciarNovaAquisicaoMobile() {
+    editingAquisicaoMobileId = '';
+    document.getElementById('aq-edit-id-mobile').value = '';
+    document.getElementById('form-aquisicao').reset();
+    document.getElementById('aq-data-mobile').value = new Date().toISOString().split('T')[0];
+    document.getElementById('btn-enviar-aq-text').textContent = 'Registrar Aquisição';
+    document.getElementById('btn-cancel-edit-aq').classList.add('hidden');
+    irParaTela('screen-aquisicao');
+}
+
+function editarAquisicaoMobileSelecionada() {
+    const aq = getAquisicaoMobileSelecionada();
+    if (!aq) return;
+    fecharMenuAquisicaoMobile();
+
+    editingAquisicaoMobileId = aq.id;
+    document.getElementById('aq-edit-id-mobile').value = aq.id;
+    document.getElementById('aq-compra-mobile').value = aq.numeroCompra || '';
+    document.getElementById('aq-item-mobile').value = aq.item || '';
+    document.getElementById('aq-data-mobile').value = aq.data || new Date().toISOString().split('T')[0];
+    document.getElementById('aq-fornecedor-mobile').value = aq.fornecedor || '';
+    document.getElementById('aq-veiculo-mobile').value = aq.veiculo || '';
+    document.getElementById('aq-qtd-mobile').value = aq.quantidade || '';
+    document.getElementById('aq-valor-mobile').value = aq.valor || '';
+    document.getElementById('aq-resp-mobile').value = aq.responsavel || '';
+    document.getElementById('aq-obs-mobile').value = aq.obs || '';
+    document.getElementById('btn-enviar-aq-text').textContent = 'Salvar alterações';
+    document.getElementById('btn-cancel-edit-aq').classList.remove('hidden');
+    irParaTela('screen-aquisicao');
+}
+
+async function excluirAquisicaoMobileSelecionada() {
+    const aq = getAquisicaoMobileSelecionada();
+    if (!aq) return;
+    if (!confirm('Excluir esta solicitação de aquisição?')) return;
+
+    try {
+        const res = await fetch(`${serverUrl}/api/aquisicao/${encodeURIComponent(aq.id)}`, {
+            method: 'DELETE',
+            signal: AbortSignal.timeout(8000)
+        });
+        if (!res.ok) throw new Error('Falha ao excluir.');
+        fecharMenuAquisicaoMobile();
+        showToast('Solicitação excluída.');
+        carregarAquisicoesMobile();
+    } catch (err) {
+        console.error(err);
+        showToast('Erro ao excluir a solicitação.');
+    }
+}
+
+function abrirMotivoNaoRealizadoMobile() {
+    const aq = getAquisicaoMobileSelecionada();
+    if (!aq) return;
+    fecharMenuAquisicaoMobile();
+    document.getElementById('aq-not-done-reason').value = aq.motivo || '';
+    document.getElementById('aq-reason-modal').classList.remove('hidden');
+}
+
+function fecharMotivoNaoRealizadoMobile() {
+    document.getElementById('aq-reason-modal')?.classList.add('hidden');
+}
+
+async function salvarNaoRealizadoMobile() {
+    const aq = getAquisicaoMobileSelecionada();
+    const motivo = document.getElementById('aq-not-done-reason').value.trim();
+    if (!aq) return;
+    if (!motivo) {
+        showToast('Informe o motivo.');
+        return;
+    }
+
+    try {
+        const res = await fetch(`${serverUrl}/api/aquisicao/${encodeURIComponent(aq.id)}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'nao-concluido', motivo, origem: aq.origem || 'mobile-app' }),
+            signal: AbortSignal.timeout(8000)
+        });
+        if (!res.ok) throw new Error('Falha ao salvar motivo.');
+        fecharMotivoNaoRealizadoMobile();
+        showToast('Motivo salvo.');
+        carregarAquisicoesMobile();
+    } catch (err) {
+        console.error(err);
+        showToast('Erro ao salvar o motivo.');
+    }
+}
+
 document.getElementById('form-aquisicao')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (isSubmitting) return;
@@ -453,6 +655,7 @@ document.getElementById('form-aquisicao')?.addEventListener('submit', async (e) 
     const obs = document.getElementById('aq-obs-mobile').value.trim();
 
     if (!item) { showToast('Informe o item/material.'); return; }
+    if (!data) { showToast('Informe a data.'); return; }
     if (!fornecedor) { showToast('Informe o fornecedor.'); return; }
     if (!quantidade) { showToast('Informe a quantidade.'); return; }
     if (!responsavel) { showToast('Selecione o responsável.'); return; }
@@ -462,22 +665,24 @@ document.getElementById('form-aquisicao')?.addEventListener('submit', async (e) 
     btn.innerHTML = '<span style="opacity:.7">Enviando...</span>';
     isSubmitting = true;
 
+    const editId = document.getElementById('aq-edit-id-mobile').value;
+    const aqOriginal = editId ? aquisicoesMobile.find(a => a.id === editId) : null;
     const novaAq = {
-        id: Date.now().toString(),
+        id: editId || Date.now().toString(),
         numeroCompra, item, data, fornecedor, veiculo, 
         quantidade: parseInt(quantidade), 
         valor: valor ? parseFloat(valor) : null, 
         responsavel, 
-        status: 'em-execucao', 
-        motivo: '', 
+        status: aqOriginal?.status || 'em-execucao', 
+        motivo: aqOriginal?.motivo || '', 
         obs, 
-        origem: 'mobile-app', 
-        criadoEm: new Date().toISOString()
+        origem: editId ? 'edicao-mobile' : 'mobile-app', 
+        criadoEm: aqOriginal?.criadoEm || new Date().toISOString()
     };
 
     try {
-        const res = await fetch(`${serverUrl}/api/aquisicao`, {
-            method: 'POST',
+        const res = await fetch(editId ? `${serverUrl}/api/aquisicao/${encodeURIComponent(editId)}` : `${serverUrl}/api/aquisicao`, {
+            method: editId ? 'PUT' : 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(novaAq),
             signal: AbortSignal.timeout(8000)
@@ -510,6 +715,9 @@ document.getElementById('form-aquisicao')?.addEventListener('submit', async (e) 
             </div>
         `;
         document.getElementById('success-overlay-aq').classList.remove('hidden');
+        editingAquisicaoMobileId = '';
+        document.getElementById('aq-edit-id-mobile').value = '';
+        carregarAquisicoesMobile();
 
     } catch (err) {
         console.error(err);
@@ -518,15 +726,14 @@ document.getElementById('form-aquisicao')?.addEventListener('submit', async (e) 
         btn.disabled = false;
         btn.innerHTML = `
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            Registrar Aquisição
+            <span id="btn-enviar-aq-text">${editingAquisicaoMobileId ? 'Salvar alterações' : 'Registrar Aquisição'}</span>
         `;
+        document.getElementById('btn-cancel-edit-aq')?.classList.toggle('hidden', !editingAquisicaoMobileId);
         isSubmitting = false;
     }
 });
 
 document.getElementById('btn-nova-aq')?.addEventListener('click', () => {
     document.getElementById('success-overlay-aq').classList.add('hidden');
-    document.getElementById('form-aquisicao').reset();
-    document.getElementById('aq-data-mobile').value = new Date().toISOString().split('T')[0];
-    irParaTela('screen-aquisicao');
+    iniciarNovaAquisicaoMobile();
 });
