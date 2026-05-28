@@ -4,9 +4,9 @@
    =============================================== */
 
 :root {
-    --primary: #5a67d8;
-    --primary-dark: #434190;
-    --primary-light: #ebf4ff;
+    --primary: #105444;
+    --primary-dark: #0a3a2e;
+    --primary-light: #e6f0ed;
     --bg: #f8fafc;
     --surface: #ffffff;
     --text: #1e293b;
@@ -17,7 +17,7 @@
     --warning: #f59e0b;
     --shadow-sm: 0 2px 4px rgba(0,0,0,0.04);
     --shadow-md: 0 8px 16px rgba(0,0,0,0.06);
-    --shadow-lg: 0 12px 24px rgba(90,103,216,0.15);
+    --shadow-lg: 0 12px 24px rgba(16, 84, 68, 0.15);
     --radius: 16px;
     --radius-sm: 10px;
 }
@@ -463,7 +463,7 @@ textarea {
     line-height: 1.5;
 }
 
-/* ===== TIPO DE SERVIĆ‡O GRID ===== */
+/* ===== TIPO DE SERVIÇO GRID ===== */
 .type-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -603,7 +603,7 @@ textarea {
     color: white;
 }
 
-/* ===== BOTĆ•ES ===== */
+/* ===== BOTÕES ===== */
 .btn-primary, .btn-submit {
     width: 100%;
     padding: 16px;
@@ -1140,3 +1140,124 @@ textarea {
     pointer-events: none;
     transform: translateY(8px);
 }
+
+/* ===== LOGO ===== */
+.app-logo-img {
+    height: 32px;
+    object-fit: contain;
+}
+.splash-icon-img {
+    height: 80px;
+    margin-bottom: 24px;
+    animation: scaleIn 0.5s ease-out;
+}
+.config-logo-img {
+    height: 48px;
+    margin-bottom: 16px;
+}
+
+/* ===== CALENDAR ===== */
+.calendar-wrapper {
+    padding: 16px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.calendar-top-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+.calendar-title-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.calendar-title-area strong {
+    font-size: 16px;
+}
+.btn-nav {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 600;
+}
+.calendar-actions-mobile {
+    display: flex;
+    gap: 8px;
+}
+.calendar-actions-mobile .btn-primary, .calendar-actions-mobile .btn-outline {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+.calendar-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    background: var(--bg);
+    padding: 12px 0;
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+}
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    flex: 1;
+    overflow-y: auto;
+}
+.calendar-day {
+    min-height: 80px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.calendar-day:nth-child(7n) {
+    border-right: none;
+}
+.calendar-day.empty {
+    background: #fafbfc;
+}
+.calendar-day.today {
+    background: var(--primary-light);
+}
+.day-number {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    align-self: flex-end;
+}
+.calendar-day.today .day-number {
+    color: var(--primary);
+}
+.cal-event {
+    font-size: 9px;
+    padding: 2px 4px;
+    border-radius: 4px;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+}
+.ev-baixa { background: var(--success); }
+.ev-media { background: var(--warning); color: #fff; }
+.ev-alta { background: var(--danger); }
+.ev-os { background: var(--primary); }
+.ev-aq { background: #8b5cf6; }
