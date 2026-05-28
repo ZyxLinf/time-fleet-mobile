@@ -13,7 +13,7 @@
     <!-- SPLASH / LOADING -->
     <div id="splash-screen">
         <div class="splash-logo">
-            <div class="splash-icon">TF</div>
+            <img src="logo/logoTRF.png" alt="Logo" class="app-logo-img splash-icon-img">
             <h1>Time Fleet</h1>
             <p>Solicitação de Ordens de Serviço</p>
         </div>
@@ -27,7 +27,7 @@
     <aside class="drawer" id="drawer" aria-hidden="true">
         <div class="drawer-header">
             <div class="drawer-brand">
-                <div class="app-icon">TF</div>
+                <img src="logo/logoTRF.png" alt="Logo" class="app-logo-img">
                 <div class="brand-text">
                     <div class="brand-title">Time Fleet</div>
                     <div class="brand-subtitle">Menu</div>
@@ -50,6 +50,15 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                 Aquisição
             </button>
+            <button class="drawer-item" type="button" data-nav="screen-calendar" id="drawer-calendar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+                Calendário
+            </button>
         </nav>
     </aside>
 
@@ -57,7 +66,7 @@
     <div id="screen-config" class="screen hidden">
         <div class="screen-content">
             <div class="config-header">
-                <div class="app-logo">TF</div>
+                <img src="logo/logoTRF.png" alt="Logo" class="app-logo-img config-logo-img">
                 <h2>Configurar Conexão</h2>
                 <p>Informe o endereço do servidor Time Fleet para conectar o aplicativo.</p>
             </div>
@@ -79,7 +88,7 @@
                 <button class="btn-icon" id="btn-menu-home" type="button" title="Abrir menu" aria-label="Abrir menu">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                 </button>
-                <div class="app-icon">TF</div>
+                <img src="logo/logoTRF.png" alt="Logo" class="app-logo-img">
                 <div>
                     <span class="app-title">Time Fleet</span>
                     <span class="app-subtitle">Solicitações</span>
@@ -138,6 +147,18 @@
                             <span class="subtitle">Registrar compra emergencial</span>
                         </div>
                     </button>
+                    <button class="home-action" type="button" id="home-go-calendar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                            <line x1="16" y1="2" x2="16" y2="6" />
+                            <line x1="8" y1="2" x2="8" y2="6" />
+                            <line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
+                        <div>
+                            <div class="title">Calendário</div>
+                            <span class="subtitle">Ver programação de veículos</span>
+                        </div>
+                    </button>
                 </div>
             </div>
         </div>
@@ -150,7 +171,7 @@
                 <button class="btn-icon" id="btn-menu-os" type="button" title="Abrir menu" aria-label="Abrir menu">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                 </button>
-                <div class="app-icon">TF</div>
+                <img src="logo/logoTRF.png" alt="Logo" class="app-logo-img">
                 <div>
                     <span class="app-title">Time Fleet</span>
                     <span class="app-subtitle">Solicitar O.S.</span>
@@ -281,7 +302,7 @@
                 <button class="btn-icon" id="btn-menu-aq" type="button" title="Abrir menu" aria-label="Abrir menu">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                 </button>
-                <div class="app-icon">TF</div>
+                <img src="logo/logoTRF.png" alt="Logo" class="app-logo-img">
                 <div>
                     <span class="app-title">Time Fleet</span>
                     <span class="app-subtitle">Aquisição</span>
@@ -439,6 +460,108 @@
                 <button class="btn-primary" id="btn-aq-reason-save" type="button">Salvar motivo</button>
             </div>
         </div>
+    </div>
+
+    <!-- TELA: CALENDÁRIO -->
+    <div id="screen-calendar" class="screen hidden">
+        <div class="app-header">
+            <div class="header-left">
+                <button class="btn-icon" id="btn-menu-calendar" type="button" title="Abrir menu" aria-label="Abrir menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <img src="logo/logoTRF.png" alt="Logo" class="app-logo-img">
+                <div>
+                    <span class="app-title">Time Fleet</span>
+                    <span class="app-subtitle">Calendário</span>
+                </div>
+            </div>
+            <button class="btn-icon" id="btn-config-calendar" title="Configurações">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="calendar-wrapper">
+            <div class="calendar-top-controls">
+                <div class="calendar-title-area">
+                    <button id="btn-prev-month" class="btn-nav">&lt;</button>
+                    <strong id="current-month-display">Mês Ano</strong>
+                    <button id="btn-next-month" class="btn-nav">&gt;</button>
+                </div>
+                <div class="calendar-actions-mobile">
+                    <button class="btn-outline" id="btn-hoje">Hoje</button>
+                    <button class="btn-primary" id="btn-novo-evento">+ Evento</button>
+                </div>
+            </div>
+            
+            <div class="calendar-container" id="calendar-view-container">
+                <div class="weekdays" id="calendar-weekdays">
+                    <div>DOM</div>
+                    <div>SEG</div>
+                    <div>TER</div>
+                    <div>QUA</div>
+                    <div>QUI</div>
+                    <div>SEX</div>
+                    <div>SÁB</div>
+                </div>
+                <div class="calendar-grid" id="calendar-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE EVENTO -->
+    <div class="mobile-modal hidden" id="event-modal" aria-hidden="true">
+        <div class="mobile-modal-card">
+            <h3 id="modal-event-title">Novo Lembrete/Evento</h3>
+            <form id="form-evento" class="modern-form">
+                <div class="form-group">
+                    <label>Título / Assunto</label>
+                    <input type="text" id="ev-titulo" required placeholder="Ex: Manutenção Frota A">
+                </div>
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" id="ev-data" required>
+                </div>
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <select id="ev-tipo" required>
+                        <option value="lembrete">Lembrete Geral</option>
+                        <option value="manutencao">Manutenção Programada</option>
+                        <option value="revisao">Revisão Periódica</option>
+                        <option value="documentacao">Vencimento de Documentação</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Criticidade</label>
+                    <select id="ev-criticidade" required>
+                        <option value="baixa">Baixa (Verde)</option>
+                        <option value="media">Média (Amarela)</option>
+                        <option value="alta">Alta (Vermelha)</option>
+                    </select>
+                </div>
+                <div class="mobile-modal-actions" style="margin-top: 16px;">
+                    <button type="button" class="btn-secondary" id="btn-cancel-evento">Cancelar</button>
+                    <button type="submit" class="btn-primary" id="btn-save-evento">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EVENT DETAILS SHEET -->
+    <div class="mobile-sheet-backdrop hidden" id="event-details-backdrop"></div>
+    <div class="mobile-sheet hidden" id="event-details-sheet" aria-hidden="true">
+        <div class="sheet-handle"></div>
+        <h3 id="sheet-event-title" style="margin-bottom: 8px;">Detalhes</h3>
+        <p id="sheet-event-date" style="color: var(--text-secondary); margin-bottom: 4px;"></p>
+        <p id="sheet-event-type" style="margin-bottom: 16px; font-weight: 500;"></p>
+        
+        <button class="sheet-action danger" id="btn-event-delete" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+            Excluir Evento
+        </button>
+        <button class="sheet-cancel" id="btn-event-action-cancel" type="button">Fechar</button>
     </div>
 
     <!-- OVERLAY DE SUCESSO -->
