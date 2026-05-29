@@ -789,15 +789,13 @@ function initCalendarMobile() {
 
 async function loadAllCalendarData() {
     try {
-        const [resEv, resOs] = await Promise.all([
-            fetch(`${serverUrl}/api/eventos`).catch(()=>null),
-            fetch(`${serverUrl}/api/os`).catch(()=>null)
-        ]);
-        
-        if (resEv && resEv.ok) eventosMobile = await resEv.json();
-        if (resOs && resOs.ok) allOSsMobile = await resOs.json();
-        
-        // As aquisições já foram carregadas em aquisicoesMobile
+        const resData = await fetch(`${serverUrl}/api/data`).catch(()=>null);
+        if (resData && resData.ok) {
+            const data = await resData.json();
+            eventosMobile = data.lembretes || [];
+            allOSsMobile = data.ordens || [];
+            aquisicoesMobile = data.aquisicoes || [];
+        }
         renderCalendarMobile();
     } catch (e) {
         console.error('Erro ao carregar dados do calendário', e);
@@ -888,10 +886,16 @@ async function salvarEventoMobile(e) {
     };
     
     try {
-        const res = await fetch(`${serverUrl}/api/eventos`, {
+        const getRes = await fetch(`${serverUrl}/api/data`);
+        if (!getRes.ok) throw new Error();
+        const serverData = await getRes.json();
+        serverData.lembretes = serverData.lembretes || [];
+        serverData.lembretes.push(novo);
+
+        const res = await fetch(`${serverUrl}/api/data`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(novo)
+            body: JSON.stringify(serverData)
         });
         if(res.ok) {
             document.getElementById('event-modal').classList.add('hidden');
@@ -947,7 +951,17 @@ async function deleteEventMobile() {
     if(!confirm('Excluir este evento?')) return;
     
     try {
-        const res = await fetch(`${serverUrl}/api/eventos/${currentSelectedEvent.id}`, { method: 'DELETE' });
+        const getRes = await fetch(`${serverUrl}/api/data`);
+        if (!getRes.ok) throw new Error();
+        const serverData = await getRes.json();
+        serverData.lembretes = (serverData.lembretes || []).filter(l => l.id !== currentSelectedEvent.id);
+
+        const res = await fetch(`${serverUrl}/api/data`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(serverData)
+        });
+        
         if(res.ok) {
             closeEventSheet();
             showToast('Evento excluído.');
