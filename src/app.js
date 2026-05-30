@@ -139,8 +139,8 @@ document.getElementById('btn-salvar-config').addEventListener('click', async () 
     // Testar conexão antes de salvar
     showToast('Testando conexão...', 0);
     try {
-        const res = await fetch(`${url}/api/data`, { 
-            signal: AbortSignal.timeout(5000) 
+        const res = await fetch(`${url}/api/health`, { 
+            signal: AbortSignal.timeout(10000) 
         });
         if (!res.ok) throw new Error('Servidor retornou erro.');
         
@@ -175,8 +175,8 @@ async function verificarConexao() {
     atualizarStatusConexao('checking', 'Verificando conexão...');
 
     try {
-        const res = await fetch(`${serverUrl}/api/data`, { 
-            signal: AbortSignal.timeout(5000) 
+        const res = await fetch(`${serverUrl}/api/health`, { 
+            signal: AbortSignal.timeout(10000) 
         });
         if (!res.ok) throw new Error();
         atualizarStatusConexao('online', `Conectado · ${new URL(serverUrl).hostname}`);
@@ -348,7 +348,7 @@ async function enviarOS(e) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(novaOS),
-            signal: AbortSignal.timeout(8000)
+            signal: AbortSignal.timeout(15000)
         });
         
         if (!res.ok) throw new Error('Falha ao salvar a O.S.');
@@ -484,7 +484,7 @@ async function carregarAquisicoesMobile() {
 
     try {
         const res = await fetch(`${serverUrl}/api/aquisicoes`, {
-            signal: AbortSignal.timeout(8000)
+            signal: AbortSignal.timeout(15000)
         });
         if (!res.ok) throw new Error('Falha ao carregar aquisições.');
 
@@ -590,7 +590,7 @@ async function excluirAquisicaoMobileSelecionada() {
     try {
         const res = await fetch(`${serverUrl}/api/aquisicao/${encodeURIComponent(aq.id)}`, {
             method: 'DELETE',
-            signal: AbortSignal.timeout(8000)
+            signal: AbortSignal.timeout(15000)
         });
         if (!res.ok) throw new Error('Falha ao excluir.');
         fecharMenuAquisicaoMobile();
@@ -628,7 +628,7 @@ async function salvarNaoRealizadoMobile() {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status: 'nao-concluido', motivo, origem: aq.origem || 'mobile-app' }),
-            signal: AbortSignal.timeout(8000)
+            signal: AbortSignal.timeout(15000)
         });
         if (!res.ok) throw new Error('Falha ao salvar motivo.');
         fecharMotivoNaoRealizadoMobile();
@@ -685,7 +685,7 @@ document.getElementById('form-aquisicao')?.addEventListener('submit', async (e) 
             method: editId ? 'PUT' : 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(novaAq),
-            signal: AbortSignal.timeout(8000)
+            signal: AbortSignal.timeout(15000)
         });
         
         if (!res.ok) throw new Error('Falha ao salvar a Aquisição.');
@@ -789,7 +789,9 @@ function initCalendarMobile() {
 
 async function loadAllCalendarData() {
     try {
-        const resData = await fetch(`${serverUrl}/api/data`).catch(()=>null);
+        const resData = await fetch(`${serverUrl}/api/data`, {
+            signal: AbortSignal.timeout(15000)
+        }).catch(()=>null);
         if (resData && resData.ok) {
             const data = await resData.json();
             eventosMobile = data.lembretes || [];
@@ -886,7 +888,9 @@ async function salvarEventoMobile(e) {
     };
     
     try {
-        const getRes = await fetch(`${serverUrl}/api/data`);
+        const getRes = await fetch(`${serverUrl}/api/data`, {
+            signal: AbortSignal.timeout(15000)
+        });
         if (!getRes.ok) throw new Error();
         const serverData = await getRes.json();
         serverData.lembretes = serverData.lembretes || [];
@@ -895,7 +899,8 @@ async function salvarEventoMobile(e) {
         const res = await fetch(`${serverUrl}/api/data`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(serverData)
+            body: JSON.stringify(serverData),
+            signal: AbortSignal.timeout(15000)
         });
         if(res.ok) {
             document.getElementById('event-modal').classList.add('hidden');
@@ -951,7 +956,9 @@ async function deleteEventMobile() {
     if(!confirm('Excluir este evento?')) return;
     
     try {
-        const getRes = await fetch(`${serverUrl}/api/data`);
+        const getRes = await fetch(`${serverUrl}/api/data`, {
+            signal: AbortSignal.timeout(15000)
+        });
         if (!getRes.ok) throw new Error();
         const serverData = await getRes.json();
         serverData.lembretes = (serverData.lembretes || []).filter(l => l.id !== currentSelectedEvent.id);
@@ -959,7 +966,8 @@ async function deleteEventMobile() {
         const res = await fetch(`${serverUrl}/api/data`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(serverData)
+            body: JSON.stringify(serverData),
+            signal: AbortSignal.timeout(15000)
         });
         
         if(res.ok) {
@@ -986,7 +994,9 @@ let chartBarraInstance = null;
 async function carregarDashboard() {
     if (!serverUrl) return;
     try {
-        const resData = await fetch(`${serverUrl}/api/data`).catch(()=>null);
+        const resData = await fetch(`${serverUrl}/api/data`, {
+            signal: AbortSignal.timeout(15000)
+        }).catch(()=>null);
         let aquisicoes = [];
         let lembretes = [];
         let ordens = [];
@@ -997,7 +1007,9 @@ async function carregarDashboard() {
             ordens = data.ordens || [];
             aquisicoes = data.aquisicoes || [];
         } else {
-            const resAq = await fetch(`${serverUrl}/api/aquisicoes`).catch(()=>null);
+            const resAq = await fetch(`${serverUrl}/api/aquisicoes`, {
+                signal: AbortSignal.timeout(15000)
+            }).catch(()=>null);
             if (resAq && resAq.ok) {
                 aquisicoes = await resAq.json();
             }
@@ -1007,12 +1019,12 @@ async function carregarDashboard() {
         const aqNaoRealizadas = aquisicoes.filter(a => a.status === 'nao-concluido' || a.status === 'Não Concluído').length;
         const aqAnuais = aquisicoes.length;
         
-        const veiculosSet = new Set();
-        ordens.forEach(o => veiculosSet.add(o.veiculo));
-        aquisicoes.forEach(a => { if (a.veiculo) veiculosSet.add(a.veiculo); });
+        // Contar veiculos e motoristas das listas globais (data-lists.js)
+        const totalVeiculos = (typeof veiculos !== 'undefined') ? veiculos.length : 0;
+        const totalMotoristas = (typeof motoristas !== 'undefined') ? motoristas.length : 0;
         
-        const elVeic = document.getElementById('dash-ind-veiculos'); if (elVeic) elVeic.textContent = veiculosSet.size;
-        const elMot = document.getElementById('dash-ind-motoristas'); if (elMot) elMot.textContent = 0;
+        const elVeic = document.getElementById('dash-ind-veiculos'); if (elVeic) elVeic.textContent = totalVeiculos;
+        const elMot = document.getElementById('dash-ind-motoristas'); if (elMot) elMot.textContent = totalMotoristas;
         const elAqTotal = document.getElementById('dash-ind-aq-total'); if (elAqTotal) elAqTotal.textContent = aqAnuais;
         const elAqFail = document.getElementById('dash-ind-aq-fail'); if (elAqFail) elAqFail.textContent = aqNaoRealizadas;
 
