@@ -3,7 +3,8 @@
   "appName": "Time Fleet OS",
   "webDir": "dist",
   "server": {
-    "androidScheme": "https"
+    "androidScheme": "http",
+    "allowMixedContent": true
   },
   "plugins": {
     "SplashScreen": {
