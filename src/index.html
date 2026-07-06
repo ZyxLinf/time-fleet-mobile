@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src *; img-src * 'self' data: blob:; frame-src *; style-src * 'unsafe-inline';">
+    <title>Time Fleet OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="splash-screen"><div class="splash-loader spinner-circle"></div></div>
+    <div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true"></div>
+    <aside class="drawer" id="drawer" aria-hidden="true">
+        <div class="drawer-header">
+            <div class="drawer-brand"><img src="logo/logocolor.png" alt="Logo" class="app-logo-img"><div class="brand-text"><div class="brand-title">Manutenção</div><div class="brand-subtitle">Menu</div></div></div>
+            <button class="btn-icon" id="btn-drawer-close" type="button" title="Fechar menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <nav class="drawer-nav">
+            <button class="drawer-item" type="button" data-nav="screen-home" id="drawer-home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7"/><path d="M9 22V12h6v10"/></svg> Início</button>
+            <button class="drawer-item" type="button" data-nav="screen-form" id="drawer-os"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Solicitar O.S.</button>
+            <button class="drawer-item" type="button" data-nav="screen-aquisicao" id="drawer-aq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Aquisição</button>
+            <button class="drawer-item" type="button" data-nav="screen-historico-aq" id="drawer-historico-aq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Histórico de Aq.</button>
+            <button class="drawer-item" type="button" data-nav="screen-calendar" id="drawer-calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg> Calendário</button>
+            <button class="drawer-item" type="button" data-nav="screen-financeiro" id="drawer-financeiro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Financeiro</button>
+        </nav>
+    </aside>
+    <div id="screen-config" class="screen hidden">
+        <div class="screen-content">
+            <div class="config-header"><img src="logo/logoTRF.png" alt="Logo" class="app-logo-img config-logo-img"><h2>Configurar Conexão</h2><p>Informe o endereço do servidor.</p></div>
+            <div class="form-group"><label>Endereço do Servidor</label><input type="url" id="config-server-url" placeholder="http://147.93.12.196:7011" autocomplete="off" autocapitalize="none" value="http://147.93.12.196:7011"><small>Ex: http://192.168.1.5:7011</small></div>
+            <button class="btn-primary" id="btn-salvar-config">Conectar e Continuar</button>
+            <button class="btn-secondary" id="btn-voltar-config" type="button">Voltar</button>
+        </div>
+    </div>
+    <div id="screen-home" class="screen hidden">
+        <div class="app-header header-white">
+            <div class="header-left"><button class="btn-icon dark-icon" id="btn-menu-home" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><img src="logo/logocolor.png" alt="Logo" class="app-logo-img"><div><span class="app-title title-dark">Manutenção</span><span class="app-subtitle subtitle-dark">Dashboard</span></div></div>
+            <div class="header-actions"><button class="btn-icon dark-icon" id="btn-refresh-home" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M16 8h5V3"/></svg></button><button class="btn-icon dark-icon" id="btn-config-home" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div>
+        </div>
+        <div class="connection-status" data-connection-status><div class="status-dot offline" data-connection-dot></div><span data-connection-text>Verificando conexão...</span></div>
+        <div class="offline-queue-status hidden" id="offline-queue-status"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg><span id="offline-queue-count">0</span> dados offline</div>
+        <div class="form-scroll dashboard-scroll">
+            <div class="dash-welcome"><h2>Bem-vindo!</h2><p>Resumo da frota.</p></div>
+            <div class="dash-grid-2">
+                <div class="dash-card"><div class="dash-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><div class="dash-card-val" id="dash-ind-veiculos">0</div><div class="dash-card-label">Veículos</div></div>
+                <div class="dash-card"><div class="dash-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="dash-card-val" id="dash-ind-motoristas">0</div><div class="dash-card-label">Motoristas</div></div>
+                <div class="dash-card"><div class="dash-card-icon" style="color:var(--success);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div><div class="dash-card-val" style="color:var(--success);" id="dash-ind-aq-total">0</div><div class="dash-card-label">Aq. Anuais</div></div>
+                <div class="dash-card"><div class="dash-card-icon" style="color:var(--danger);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div><div class="dash-card-val" style="color:var(--danger);" id="dash-ind-aq-fail">0</div><div class="dash-card-label">Não Realizadas</div></div>
+            </div>
+            <div class="dash-section"><div class="dash-section-header"><h3>Próximos Lembretes (3 dias)</h3><button class="btn-text-primary" id="btn-dash-ver-calendario">Ver tudo</button></div><div class="dash-list" id="dash-list-lembretes"><div class="empty-state">Carregando...</div></div></div>
+            <div class="dash-section"><div class="dash-section-header"><h3>Aquisições x Não Realizadas</h3></div><div class="dash-chart-container"><canvas id="chart-mobile-onda"></canvas></div></div>
+            <div class="dash-section"><div class="dash-section-header"><h3>Aquisições (Últ. 5 meses)</h3></div><div class="dash-chart-container"><canvas id="chart-mobile-barra"></canvas></div></div>
+            <div class="dash-section" style="margin-bottom:24px;"><div class="dash-section-header"><h3>Top Placas</h3></div><div class="dash-ranking" id="dash-ranking-placas"><div class="empty-state">Carregando...</div></div></div>
+        </div>
+    </div>
+    <div id="screen-form" class="screen hidden">
+        <div class="app-header"><div class="header-left"><button class="btn-icon" id="btn-menu-os" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><img src="logo/logocolor.png" alt="Logo" class="app-logo-img"><div><span class="app-title">Manutenção</span><span class="app-subtitle">Solicitar O.S.</span></div></div><div class="header-actions"><button class="btn-icon" id="btn-refresh-os" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M16 8h5V3"/></svg></button><button class="btn-icon" id="btn-config" title="Config"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+        <div class="connection-status" data-connection-status><div class="status-dot offline" data-connection-dot></div><span data-connection-text>Verificando...</span></div>
+        <div class="offline-queue-status hidden" id="offline-queue-status"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg><span id="offline-queue-count">0</span> offline</div>
+        <div class="form-scroll">
+            <form id="form-os" novalidate>
+                <div class="form-card"><div class="form-card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> Veículo</div><div class="form-group"><label>Placa</label><input type="text" id="os-veiculo" placeholder="Ex: SRI7A69" required autocapitalize="characters" list="lista-veiculos-native"><datalist id="lista-veiculos-native"></datalist></div></div>
+                <div class="form-card"><div class="form-card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Tipo</div><div class="type-grid">
+                    <label class="type-option"><input type="radio" name="tipo-servico" value="Corretivo" required><div class="type-card"><svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Corretivo</span></div></label>
+                    <label class="type-option"><input type="radio" name="tipo-servico" value="Preventivo"><div class="type-card"><svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 9.4-8 10-4.6-.6-8-5-8-10V6l8-4z"/></svg><span>Preventivo</span></div></label>
+                    <label class="type-option"><input type="radio" name="tipo-servico" value="Elétrico"><div class="type-card"><svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 12-14h-7l1-6z"/></svg><span>Elétrico</span></div></label>
+                    <label class="type-option"><input type="radio" name="tipo-servico" value="Preditivo"><div class="type-card"><svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg><span>Preditivo</span></div></label></div></div>
+                <div class="form-card"><div class="form-card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Equipe</div>
+                <div class="equipe-tabs"><button type="button" class="equipe-tab active" data-equipe="mecanicos">Oficina</button><button type="button" class="equipe-tab" data-equipe="lavadores">Lavagem</button><button type="button" class="equipe-tab" data-equipe="borracheiros">Borracharia</button></div>
+                <div class="form-group" style="margin-top:12px;"><label>Responsável(is)</label><div id="lista-equipe" class="equipe-lista"></div></div></div>
+                <div class="form-card"><div class="form-card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg> Descrição</div><div class="form-group"><textarea id="os-descricao" rows="4" placeholder="Descreva o problema..." required></textarea></div></div>
+                <button type="submit" class="btn-submit" id="btn-enviar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Enviar</button>
+            </form>
+        </div>
+    </div>
+    <div id="screen-historico-aq" class="screen hidden">
+        <div class="app-header"><div class="header-left"><button class="btn-icon" id="btn-menu-hist-aq" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><img src="logo/logocolor.png" alt="Logo" class="app-logo-img"><div><span class="app-title">Manutenção</span><span class="app-subtitle">Histórico</span></div></div><div class="header-actions"><button class="btn-icon" id="btn-refresh-aq-list" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M16 8h5V3"/></svg></button></div></div>
+        <div class="form-scroll"><div class="list-toolbar"><div><h2>Registro de Aquisições</h2><span id="aq-list-count">Carregando...</span></div><button class="btn-mini-primary" id="btn-hist-new-aq" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Nova</button></div><div id="aq-list-mobile" class="aq-list-mobile"><div class="empty-state">Carregando...</div></div></div>
+    </div>
+    <div class="screen hidden" id="screen-aquisicao">
+        <div class="app-header"><div class="header-left"><button class="btn-icon" id="btn-menu-aq" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><img src="logo/logocolor.png" alt="Logo" class="app-logo-img"><div><span class="app-title">Manutenção</span><span class="app-subtitle">Aquisição</span></div></div><div class="header-actions"><button class="btn-icon" id="btn-refresh-aq" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M16 8h5V3"/></svg></button><button class="btn-icon" id="btn-config-aq" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+        <div class="connection-status" data-connection-status><div class="status-dot offline" data-connection-dot></div><span data-connection-text>Verificando...</span></div>
+        <div class="offline-queue-status hidden" id="offline-queue-status"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg><span id="offline-queue-count">0</span> offline</div>
+        <div class="form-scroll">
+            <form id="form-aquisicao"><input type="hidden" id="aq-edit-id-mobile">
+                <div class="form-card"><div class="form-card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Item</div>
+                <div class="form-group"><label>Nº Compra</label><input type="text" id="aq-compra-mobile" placeholder="123456"></div>
+                <div class="form-group" style="margin-top:12px;"><label>Material *</label><input type="text" id="aq-item-mobile" placeholder="filtro de óleo" required></div>
+                <div class="form-group" style="margin-top:12px;"><label>Data</label><input type="date" id="aq-data-mobile"></div></div>
+                <div class="form-card"><div class="form-card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4 8 4v14"/><path d="M9 9h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg> Fornecedor</div>
+                <div class="form-group"><label>Nome *</label><input type="text" id="aq-fornecedor-mobile" list="aq-forn-list-mobile" placeholder="Auto Peças Central" required oninput="filtrarFornecedores(this.value)"><datalist id="aq-forn-list-mobile"></datalist></div></div>
+                <div class="form-card"><div class="form-card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> Veículo</div>
+                <div class="form-group"><input type="text" id="aq-veiculo-mobile" list="aq-veic-list-mobile" placeholder="EMP001"><datalist id="aq-veic-list-mobile"></datalist></div></div>
+                <div class="form-card"><div class="form-card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg> Detalhes</div>
+                <div class="form-row-native"><div class="form-group" style="flex:1;"><label>Qtde *</label><input type="number" id="aq-qtd-mobile" min="1" placeholder="1"></div><div class="form-group" style="flex:1;"><label>Valor (R$)</label><input type="number" id="aq-valor-mobile" step="0.01" min="0" placeholder="0,00"></div></div></div>
+                <div class="form-card"><div class="form-card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Responsável</div>
+                <div class="form-group"><select id="aq-resp-mobile"><option value="">Selecionar quem buscou *</option></select></div>
+                <div class="form-group" style="margin-top:12px;"><label class="checkbox-label"><input type="checkbox" id="aq-motorista-logistica"><span>Motorista da Logística</span></label></div></div>
+                <div class="form-card"><div class="form-card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg> Obs</div>
+                <div class="form-group"><textarea id="aq-obs-mobile" rows="4" placeholder="Observações..."></textarea></div></div>
+                <button type="submit" class="btn-submit" id="btn-enviar-aq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span id="btn-enviar-aq-text">Registrar</span></button>
+                <button type="button" class="btn-secondary hidden" id="btn-cancel-edit-aq">Cancelar edição</button>
+            </form>
+        </div>
+        <div class="success-overlay hidden" id="success-overlay-aq"><div class="success-content"><div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div><h2>Aquisição Registrada!</h2><div class="success-details" id="success-details-aq"></div><button class="btn-submit" id="btn-nova-aq" style="margin-top:24px;">Registrar Nova</button></div></div>
+    </div>
+    <div class="mobile-sheet-backdrop hidden" id="aq-action-backdrop"></div>
+    <div class="mobile-sheet hidden" id="aq-action-sheet" aria-hidden="true">
+        <div class="sheet-handle"></div>
+        <h3 id="aq-action-title">Solicitação</h3><p id="aq-action-subtitle"></p>
+        <button class="sheet-action" id="btn-aq-view" type="button">Ver</button>
+        <button class="sheet-action" id="btn-aq-edit" type="button">Editar</button>
+        <button class="sheet-action warning" id="btn-aq-not-done" type="button">Não realizado</button>
+        <button class="sheet-action danger" id="btn-aq-delete" type="button">Excluir</button>
+        <button class="sheet-cancel" id="btn-aq-action-cancel" type="button">Cancelar</button>
+    </div>
+    <div class="mobile-modal hidden" id="aq-reason-modal" aria-hidden="true"><div class="mobile-modal-card"><h3>Motivo</h3><textarea id="aq-not-done-reason" rows="4" placeholder="Motivo..."></textarea><div class="mobile-modal-actions"><button class="btn-secondary" id="btn-aq-reason-cancel">Cancelar</button><button class="btn-primary" id="btn-aq-reason-save">Salvar</button></div></div></div>
+    <div id="screen-aq-view" class="screen hidden">
+        <div class="app-header"><div class="header-left"><button class="btn-icon" id="btn-back-aq-view" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><img src="logo/logocolor.png" alt="Logo" class="app-logo-img"><div><span class="app-title">Detalhes</span></div></div></div>
+        <div class="form-scroll"><div id="aq-view-content"></div></div>
+    </div>
+    <div class="mobile-sheet-backdrop hidden" id="day-menu-backdrop"></div>
+    <div class="mobile-sheet hidden" id="day-menu-sheet" aria-hidden="true">
+        <div class="sheet-handle"></div>
+        <h3 id="day-menu-title">Eventos</h3>
+        <div id="day-menu-content" style="max-height:60vh;overflow-y:auto;"></div>
+        <button class="sheet-cancel" id="btn-day-menu-close">Fechar</button>
+    </div>
+    <div id="screen-calendar" class="screen hidden">
+        <div class="app-header"><div class="header-left"><button class="btn-icon" id="btn-menu-calendar" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><img src="logo/logocolor.png" alt="Logo" class="app-logo-img"><div><span class="app-title">Manutenção</span><span class="app-subtitle">Calendário</span></div></div><div class="header-actions"><button class="btn-icon" id="btn-refresh-calendar" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M16 8h5V3"/></svg></button><button class="btn-icon" id="btn-config-calendar" title="Config"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+        <div class="calendar-wrapper"><div class="calendar-top-controls"><div class="calendar-title-area"><button id="btn-prev-month" class="btn-nav"><</button><strong id="current-month-display">Mês Ano</strong><button id="btn-next-month" class="btn-nav">></button></div><div class="calendar-actions-mobile"><button class="btn-outline" id="btn-hoje">Hoje</button><button class="btn-primary" id="btn-novo-evento">+ Evento</button></div></div><div class="calendar-container" id="calendar-view-container"><div class="weekdays" id="calendar-weekdays"><div>DOM</div><div>SEG</div><div>TER</div><div>QUA</div><div>QUI</div><div>SEX</div><div>SÁB</div></div><div class="calendar-grid" id="calendar-grid"></div></div></div>
+    </div>
+    <div id="screen-financeiro" class="screen hidden">
+        <div class="app-header"><div class="header-left"><button class="btn-icon" id="btn-menu-financeiro" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><img src="logo/logocolor.png" alt="Logo" class="app-logo-img"><div><span class="app-title">Manutenção</span><span class="app-subtitle">Financeiro</span></div></div><div class="header-actions"><button class="btn-icon" id="btn-refresh-financeiro" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M16 8h5V3"/></svg></button></div></div>
+        <div class="form-scroll">
+            <div class="fin-subtabs" style="display:flex;gap:4px;padding:8px 16px;overflow-x:auto;background:var(--card-bg);border-bottom:1px solid var(--border);">
+                <button class="fin-tab active" data-fintab="fin-resumo" style="padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:var(--primary);color:#fff;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;">Resumo</button>
+                <button class="fin-tab" data-fintab="fin-veiculos" style="padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:var(--card-bg);color:var(--text);font-size:12px;font-weight:500;white-space:nowrap;cursor:pointer;">Por Veículo</button>
+                <button class="fin-tab" data-fintab="fin-top" style="padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:var(--card-bg);color:var(--text);font-size:12px;font-weight:500;white-space:nowrap;cursor:pointer;">Top Gastos</button>
+                <button class="fin-tab" data-fintab="fin-fornecedores" style="padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:var(--card-bg);color:var(--text);font-size:12px;font-weight:500;white-space:nowrap;cursor:pointer;">Fornecedores</button>
+                <button class="fin-tab" data-fintab="fin-responsaveis" style="padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:var(--card-bg);color:var(--text);font-size:12px;font-weight:500;white-space:nowrap;cursor:pointer;">Responsáveis</button>
+                <button class="fin-tab" data-fintab="fin-mensal" style="padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:var(--card-bg);color:var(--text);font-size:12px;font-weight:500;white-space:nowrap;cursor:pointer;">Mensal</button>
+            </div>
+            <div id="fin-resumo" class="fin-content active" style="padding:16px;">
+                <div class="dash-grid-2" style="margin-bottom:12px;">
+                    <div class="dash-card"><div class="dash-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="dash-card-val" id="fin-resumo-total">R$ 0</div><div class="dash-card-label">Gasto Total</div></div>
+                    <div class="dash-card"><div class="dash-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div><div class="dash-card-val" id="fin-resumo-itens">0</div><div class="dash-card-label">Itens</div></div>
+                    <div class="dash-card"><div class="dash-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div class="dash-card-val" id="fin-resumo-veiculos">0</div><div class="dash-card-label">Veículos</div></div>
+                    <div class="dash-card"><div class="dash-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="dash-card-val" id="fin-resumo-fornecedores">0</div><div class="dash-card-label">Fornecedores</div></div>
+                </div>
+                <div style="height:180px;margin-bottom:12px;"><canvas id="chart-fin-resumo"></canvas></div>
+                <div class="dash-section-header"><h3>Últimas Aquisições</h3></div>
+                <div id="fin-resumo-lista"></div>
+            </div>
+            <div id="fin-veiculos" class="fin-content" style="padding:16px;display:none;">
+                <h3>Gastos por Veículo</h3>
+                <input type="text" id="fin-filtro-veiculo" placeholder="Filtrar placa..." style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border);margin-bottom:12px;font-size:14px;">
+                <div id="fin-veiculos-lista"></div>
+                <button id="fin-ver-todos-veiculos" style="width:100%;padding:12px;border-radius:10px;background:var(--primary);color:#fff;border:none;font-weight:600;margin-top:8px;cursor:pointer;">Ver Todos</button>
+            </div>
+            <div id="fin-top" class="fin-content" style="padding:16px;display:none;">
+                <h3>Top Gastos</h3>
+                <div id="fin-top-lista"></div>
+                <button id="fin-ver-ranking-completo" style="width:100%;padding:12px;border-radius:10px;background:var(--primary);color:#fff;border:none;font-weight:600;margin-top:8px;cursor:pointer;">Ver Ranking</button>
+            </div>
+            <div id="fin-fornecedores" class="fin-content" style="padding:16px;display:none;">
+                <h3>Gastos por Fornecedor</h3>
+                <div id="fin-fornecedores-lista"></div>
+            </div>
+            <div id="fin-responsaveis" class="fin-content" style="padding:16px;display:none;">
+                <h3>Gastos por Responsável</h3>
+                <div id="fin-responsaveis-lista"></div>
+            </div>
+            <div id="fin-mensal" class="fin-content" style="padding:16px;display:none;">
+                <h3>Evolução Mensal</h3>
+                <div style="height:200px;margin-bottom:12px;"><canvas id="chart-fin-mensal"></canvas></div>
+                <div id="fin-mensal-tabela"></div>
+            </div>
+        </div>
+        <div class="mobile-modal hidden" id="fin-modal-veiculos" aria-hidden="true">
+            <div class="mobile-modal-card" style="max-height:80vh;overflow-y:auto;">
+                <h3>Todos os Veículos</h3>
+                <div id="fin-modal-veiculos-lista"></div>
+                <div class="mobile-modal-actions"><button class="btn-primary" id="btn-fechar-fin-modal">Fechar</button></div>
+            </div>
+        </div>
+    </div>
+    <div class="mobile-modal hidden" id="event-modal" aria-hidden="true">
+        <div class="mobile-modal-card">
+            <h3>Novo Evento</h3>
+            <form id="form-evento">
+                <div class="form-group"><label>Título</label><input type="text" id="ev-titulo" required></div>
+                <div class="form-group"><label>Data</label><input type="date" id="ev-data" required></div>
+                <div class="form-group"><label>Tipo</label><select id="ev-tipo" required><option value="lembrete">Lembrete</option><option value="manutencao">Manutenção</option><option value="revisao">Revisão</option><option value="documentacao">Documentação</option></select></div>
+                <div class="form-group"><label>Criticidade</label><select id="ev-criticidade" required><option value="baixa">Baixa</option><option value="media">Média</option><option value="alta">Alta</option></select></div>
+                <div class="mobile-modal-actions" style="margin-top:16px;"><button type="button" class="btn-secondary" id="btn-cancel-evento">Cancelar</button><button type="submit" class="btn-primary" id="btn-save-evento">Salvar</button></div>
+            </form>
+        </div>
+    </div>
+    <div class="mobile-sheet-backdrop hidden" id="event-details-backdrop"></div>
+    <div class="mobile-sheet hidden" id="event-details-sheet" aria-hidden="true">
+        <div class="sheet-handle"></div>
+        <h3 id="sheet-event-title">Detalhes</h3>
+        <p id="sheet-event-date"></p>
+        <p id="sheet-event-type"></p>
+        <button class="sheet-action danger" id="btn-event-delete" type="button">Excluir</button>
+        <button class="sheet-cancel" id="btn-event-action-cancel">Fechar</button>
+    </div>
+    <div id="success-overlay" class="success-overlay hidden"><div class="success-content"><div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div><h2>Enviado!</h2><div class="success-details" id="success-details"></div><button class="btn-nova-os" id="btn-nova-os">+ Nova</button></div></div>
+    <div id="toast" class="toast hidden"><span id="toast-msg"></span></div>
+    <script src="data-lists.js"></script>
+    <script src="fornecedores.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
